@@ -30,7 +30,73 @@ class ExaMCP:
         """Categorize query to select appropriate domains"""
         query_lower = query.lower()
         
-        # Security-related keywords
+        # Identity & Access Management
+        if any(word in query_lower for word in [
+            'iam', 'identity', 'saml', 'oauth', 'oidc', 'entra', 'azure ad', 'active directory', 'okta', 'auth0', 'duo', 'mfa', 'sso', 'single sign-on'
+        ]):
+            return "identity_access"
+
+        # Endpoint security / EDR / XDR
+        if any(word in query_lower for word in [
+            'edr', 'xdr', 'antivirus', 'endpoint', 'defender for endpoint', 'crowdstrike', 'sentinelone', 'cylance', 'trellix'
+        ]):
+            return "endpoint_security"
+
+        # Email security / M365 security
+        if any(word in query_lower for word in [
+            'email security', 'phishing protection', 'mimecast', 'proofpoint', 'exchange online protection', 'eop', 'microsoft 365 defender'
+        ]):
+            return "email_security"
+
+        # Code security / SCA / SAST / secrets
+        if any(word in query_lower for word in [
+            'sast', 'sca', 'snyk', 'veracode', 'gitguardian', 'supply chain security', 'dependency vulnerability', 'github advisories'
+        ]):
+            return "code_security"
+
+        # Observability & monitoring
+        if any(word in query_lower for word in [
+            'observability', 'monitoring', 'apm', 'metrics', 'tracing', 'logs', 'datadog', 'new relic', 'grafana', 'prometheus', 'splunk', 'elastic'
+        ]):
+            return "observability_monitoring"
+
+        # Networking & infrastructure vendors
+        if any(word in query_lower for word in [
+            'router', 'switch', 'bgp', 'ospf', 'sd-wan', 'firewall', 'vpn', 'cisco', 'juniper', 'aruba', 'mikrotik', 'f5', 'citrix', 'load balancer'
+        ]):
+            return "networking_infra"
+
+        # Containers & Kubernetes / service mesh
+        if any(word in query_lower for word in [
+            'kubernetes', 'k8s', 'pod', 'cluster', 'ingress', 'docker', 'container', 'istio', 'envoy', 'helm', 'openshift'
+        ]):
+            return "containers_k8s"
+
+        # Linux/Unix topics
+        if any(word in query_lower for word in [
+            'linux', 'ubuntu', 'debian', 'red hat', 'rhel', 'kernel', 'systemd', 'bash'
+        ]):
+            return "linux_unix"
+
+        # Windows enterprise topics
+        if any(word in query_lower for word in [
+            'windows server', 'gpo', 'group policy', 'powershell', 'active directory', 'adcs', 'wsus'
+        ]):
+            return "windows_enterprise"
+
+        # Data platforms / databases / caching
+        if any(word in query_lower for word in [
+            'postgres', 'postgresql', 'mysql', 'mariadb', 'mongodb', 'redis', 'clickhouse', 'database', 'rdbms'
+        ]):
+            return "data_platforms"
+
+        # IaC and cloud provisioning
+        if any(word in query_lower for word in [
+            'terraform', 'pulumi', 'cloudformation', 'ansible', 'iac', 'infrastructure as code'
+        ]):
+            return "cloud_iac"
+
+        # General cybersecurity
         if any(word in query_lower for word in ['security', 'vulnerability', 'cve', 'threat', 'malware', 'hack', 'breach', 'attack', 'exploit', 'phishing']):
             return "cybersecurity"
         

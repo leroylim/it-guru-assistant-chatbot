@@ -92,6 +92,86 @@
       "sciencedirect.com",
       "researchgate.net"
     ]
+    ,
+    "identity_access": [
+      "okta.com",
+      "developer.okta.com",
+      "help.okta.com",
+      "auth0.com",
+      "auth0.com/docs",
+      "duo.com",
+      "duo.com/docs",
+      "learn.microsoft.com/entra"
+    ],
+    "observability_monitoring": [
+      "docs.datadoghq.com",
+      "docs.newrelic.com",
+      "docs.splunk.com",
+      "www.elastic.co/guide",
+      "grafana.com/docs",
+      "prometheus.io/docs"
+    ],
+    "networking_infra": [
+      "www.cisco.com/c/en/us/support",
+      "docs.arista.com",
+      "supportportal.juniper.net",
+      "www.arubanetworks.com/techdocs",
+      "help.ui.com",
+      "mikrotik.com/download"
+    ],
+    "endpoint_security": [
+      "learn.microsoft.com/defender",
+      "www.crowdstrike.com/resources",
+      "support.sentinelone.com",
+      "www.trendmicro.com",
+      "docs.trellix.com"
+    ],
+    "email_security": [
+      "help.proofpoint.com",
+      "community.mimecast.com",
+      "learn.microsoft.com/microsoft-365/security"
+    ],
+    "code_security": [
+      "docs.snyk.io",
+      "docs.veracode.com",
+      "docs.gitguardian.com",
+      "github.com/advisories"
+    ],
+    "containers_k8s": [
+      "kubernetes.io",
+      "docs.docker.com",
+      "istio.io",
+      "envoyproxy.io",
+      "helm.sh",
+      "docs.openshift.com"
+    ],
+    "linux_unix": [
+      "ubuntu.com",
+      "ubuntu.com/security",
+      "security.debian.org",
+      "access.redhat.com",
+      "kernel.org"
+    ],
+    "windows_enterprise": [
+      "learn.microsoft.com/windows",
+      "learn.microsoft.com/windows-server",
+      "learn.microsoft.com/windows/security",
+      "learn.microsoft.com/powershell"
+    ],
+    "data_platforms": [
+      "www.postgresql.org/docs",
+      "dev.mysql.com/doc",
+      "www.mongodb.com/docs",
+      "redis.io/docs",
+      "clickhouse.com/docs"
+    ],
+    "cloud_iac": [
+      "registry.terraform.io",
+      "developer.hashicorp.com",
+      "docs.ansible.com",
+      "www.pulumi.com/docs",
+      "docs.aws.amazon.com/cloudformation"
+    ]
   },
   "vendor_map": {
     "cisco": ["advisories.cisco.com", "blogs.cisco.com", "talosintelligence.com", "www.cisco.com/c/en/us/support"],
