@@ -189,6 +189,16 @@
       "docs.servicenow.com",
       "support.atlassian.com/jira-service-management"
     ]
+    ,
+    "storage_infra": [
+      "www.dell.com/support",
+      "infohub.delltechnologies.com",
+      "support.hpe.com",
+      "docs.netapp.com",
+      "support.purestorage.com",
+      "kb.synology.com",
+      "www.qnap.com"
+    ]
   },
   "vendor_map": {
     "cisco": ["advisories.cisco.com", "blogs.cisco.com", "talosintelligence.com", "www.cisco.com/c/en/us/support"],
@@ -203,7 +213,7 @@
     "cisco meraki": ["documentation.meraki.com", "meraki.cisco.com"],
     "extreme networks": ["www.extremenetworks.com", "documentation.extremenetworks.com"],
     "extreme": ["www.extremenetworks.com", "documentation.extremenetworks.com"],
-    "arista": ["www.arista.com"],
+    "arista": ["www.arista.com", "docs.arista.com"],
     "netapp": ["docs.netapp.com"],
     "pure storage": ["support.purestorage.com"],
     "purestorage": ["support.purestorage.com"],
@@ -234,6 +244,7 @@
     "azure": ["learn.microsoft.com/azure", "azure.microsoft.com", "azure.microsoft.com/blog/topics/security"],
     "cloudflare": ["cloudflare.com", "blog.cloudflare.com", "developers.cloudflare.com", "docs.cloudflare.com"],
     "okta": ["okta.com", "developer.okta.com", "help.okta.com"],
+    "okta workforce identity": ["okta.com", "help.okta.com", "developer.okta.com"],
     "auth0": ["auth0.com", "auth0.com/docs"],
     "duo": ["duo.com", "duo.com/blog", "duo.com/docs"],
     "zscaler": ["www.zscaler.com", "help.zscaler.com", "trust.zscaler.com"],
@@ -287,6 +298,26 @@
     "new relic": ["newrelic.com", "docs.newrelic.com"],
     "pagerduty": ["www.pagerduty.com", "support.pagerduty.com"],
     "opsgenie": ["www.atlassian.com/software/opsgenie", "support.atlassian.com/opsgenie"],
-    "okta workforce identity": ["okta.com", "help.okta.com", "developer.okta.com"]
+    "ping identity": ["pingidentity.com", "docs.pingidentity.com", "support.pingidentity.com"],
+    "onelogin": ["onelogin.com", "developers.onelogin.com", "support.onelogin.com"],
+    "abnormal security": ["abnormalsecurity.com", "support.abnormalsecurity.com"],
+    "dell emc": ["www.dell.com/support", "infohub.delltechnologies.com"],
+    "powerscale": ["www.dell.com/support", "infohub.delltechnologies.com"],
+    "powerstore": ["www.dell.com/support", "infohub.delltechnologies.com"],
+    "isilon": ["www.dell.com/support", "infohub.delltechnologies.com"],
+    "hpe nimble": ["support.hpe.com"],
+    "hpe 3par": ["support.hpe.com"],
+    "hpe alletra": ["support.hpe.com"],
+    "synology": ["www.synology.com", "kb.synology.com"],
+    "qnap": ["www.qnap.com", "service.qnap.com", "qnap.com/en/how-to"],
+    "mikrotik": ["help.mikrotik.com", "mikrotik.com/download"],
+    "teltonika": ["teltonika-networks.com", "wiki.teltonika-networks.com", "help.teltonika-networks.com"],
+    "ubiquiti": ["help.ui.com"],
+    "unifi": ["help.ui.com"],
+    "broadcom": ["knowledge.broadcom.com", "techdocs.broadcom.com"],
+    "symantec": ["knowledge.broadcom.com", "techdocs.broadcom.com"],
+    "bitdefender": ["www.bitdefender.com", "www.bitdefender.com/support"],
+    "eset": ["help.eset.com", "support.eset.com"],
+    "netgear": ["kb.netgear.com", "community.netgear.com"]
   }
 }

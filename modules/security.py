@@ -44,7 +44,8 @@ def build_sources_markdown(results: List[Dict]) -> str:
         title = sanitize_text(r.get("title", "Untitled"))
         source = sanitize_text(r.get("source", ""))
         suffix = f" ({source})" if source else ""
-        lines.append(f"{i}. [{title}]({url}){suffix}")
+        # Show hyperlink followed by raw URL for easy verification/copying
+        lines.append(f"{i}. [{title}]({url}){suffix} — {url}")
     return "\n".join(lines)
 
 

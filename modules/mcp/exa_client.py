@@ -42,9 +42,19 @@ class ExaMCP:
         ]):
             return "backup_dr"
 
+        # Storage infrastructure (NAS/SAN/array)
+        if any(word in query_lower for word in [
+            'storage', 'nas', 'san', 'iscsi', 'nfs', 'smb', 'raid',
+            'dell emc', 'powerscale', 'powerstore', 'isilon',
+            'hpe nimble', 'hpe 3par', 'hpe alletra', 'nimble', '3par', 'alletra',
+            'synology', 'qnap', 'netapp', 'pure storage', 'purestorage'
+        ]):
+            return "storage_infra"
+
         # Identity & Access Management
         if any(word in query_lower for word in [
-            'iam', 'identity', 'saml', 'oauth', 'oidc', 'entra', 'azure ad', 'active directory', 'okta', 'auth0', 'duo', 'mfa', 'sso', 'single sign-on'
+            'iam', 'identity', 'saml', 'oauth', 'oidc', 'entra', 'azure ad', 'active directory', 'okta', 'auth0', 'duo', 'mfa', 'sso', 'single sign-on',
+            'ping identity', 'onelogin'
         ]):
             return "identity_access"
 
@@ -56,7 +66,7 @@ class ExaMCP:
 
         # Email security / M365 security
         if any(word in query_lower for word in [
-            'email security', 'phishing protection', 'mimecast', 'proofpoint', 'exchange online protection', 'eop', 'microsoft 365 defender'
+            'email security', 'phishing protection', 'mimecast', 'proofpoint', 'exchange online protection', 'eop', 'microsoft 365 defender', 'abnormal security'
         ]):
             return "email_security"
 
@@ -75,7 +85,7 @@ class ExaMCP:
         # Networking & infrastructure vendors
         if any(word in query_lower for word in [
             'router', 'switch', 'bgp', 'ospf', 'sd-wan', 'firewall', 'vpn', 'cisco', 'juniper', 'aruba', 'mikrotik', 'f5', 'citrix', 'load balancer',
-            'meraki', 'extreme', 'arista'
+            'meraki', 'extreme', 'arista', 'ubiquiti', 'unifi', 'netgear', 'teltonika'
         ]):
             return "networking_infra"
 
@@ -261,9 +271,9 @@ class ExaMCP:
             exa_api_key = st.secrets.get("EXA_API_KEY")
             if not exa_api_key:
                 return []
-            # Allow overriding max_results via secrets
+            # Allow overriding max_results via secrets (prefer EXA_NUM_RESULTS, fallback to EXA_MAX_RESULTS)
             try:
-                max_results = int(st.secrets.get("EXA_MAX_RESULTS", max_results))
+                max_results = int(st.secrets.get("EXA_NUM_RESULTS", st.secrets.get("EXA_MAX_RESULTS", max_results)))
             except Exception:
                 pass
             

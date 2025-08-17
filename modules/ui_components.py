@@ -233,14 +233,32 @@ class ChatInterface:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
                 
-                # Show intent detection and sources for assistant messages
-                if message["role"] == "assistant" and i == len(st.session_state.messages) - 1:
-                    # Show intent detection details
-                    IntentDetectionUI.render_intent_details()
-                    
-                    # Show sources (safe Markdown, no raw HTML allowed)
-                    if hasattr(st.session_state, 'last_sources') and st.session_state.last_sources:
-                        st.markdown(st.session_state.last_sources, unsafe_allow_html=False)
+                # Show intent detection details and sources for each assistant message
+                if message["role"] == "assistant":
+                    # Prefer per-message intent info if present
+                    intent_info = message.get("intent_info")
+                    if intent_info:
+                        with st.expander("🔍 Intent Detection Details", expanded=False):
+                            method = intent_info.get('method', 'unknown')
+                            confidence = intent_info.get('confidence', 0)
+                            source = intent_info.get('source', 'unknown')
+                            reasoning = intent_info.get('reasoning')
+                            multi_source = intent_info.get('multi_source', False)
+                            st.write(f"**Method:** {str(method).title()}")
+                            try:
+                                st.write(f"**Confidence:** {float(confidence):.1%}")
+                            except Exception:
+                                st.write(f"**Confidence:** {confidence}")
+                            st.write(f"**Source:** {str(source).replace('_', ' ').title()}")
+                            if reasoning:
+                                st.write(f"**AI Reasoning:** {reasoning}")
+                            if multi_source:
+                                st.info("🔄 Multi-source search used due to low confidence")
+
+                    # Prefer per-message sources if present
+                    sources_md = message.get("sources_md")
+                    if sources_md:
+                        st.markdown(sources_md, unsafe_allow_html=False)
                 
                 # (Feedback buttons removed)
     

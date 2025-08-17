@@ -119,7 +119,14 @@ if prompt := st.chat_input(placeholder):
             
             # Render response and persist it
             st.markdown(response)
-            st.session_state.messages.append({"role": "assistant", "content": response})
+            # Attach per-message metadata for intent and sources
+            intent_info = st.session_state.get("last_intent_info")
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": response,
+                "sources_md": sources,
+                "intent_info": intent_info or {}
+            })
             
             # Store sources for display
             if sources:
