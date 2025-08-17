@@ -6,6 +6,7 @@ import json
 import httpx
 import streamlit as st
 import re
+import os
 from typing import Dict, Any
 
 
@@ -26,35 +27,45 @@ class AIIntentDetector:
             query_lower = query.lower().strip()
 
             if enforce_scope:
-                # Non-IT topics to block (use specific phrases to avoid collisions)
-                non_it_patterns = [
-                    'relationship', 'dating', 'marriage', 'breakup', 'love',
-                    'diet', 'nutrition', 'weight loss', 'fitness', 'workout',
-                    'mental health', 'therapy', 'depression', 'anxiety',
-                    'finance', 'stock market', 'stock trading', 'cryptocurrency', 'crypto trading', 'crypto wallet', 'investment', 'tax', 'budget',
-                    'politics', 'election', 'public policy', 'foreign policy', 'economic policy',
-                    'religion', 'spiritual', 'astrology', 'horoscope',
-                    'parenting', 'pregnancy', 'baby',
-                    'travel', 'vacation', 'tourism', 'itinerary',
-                    'sports', 'football', 'soccer', 'basketball',
-                    'cooking', 'recipe', 'food', 'restaurant',
-                    'celebrity', 'gossip', 'entertainment', 'movie', 'music'
-                ]
-                # IT-career/pro topics (allowed when configured)
-                it_career_whitelist = [
-                    'resume', 'cv', 'interview', 'career', 'study path', 'roadmap',
-                    'certification', 'certifications', 'soc analyst', 'sre career',
-                    'devops upskilling', 'job market', 'portfolio', 'linkedin'
-                ]
-
-                # Common IT anchors: if present, prefer allowing the query
-                it_anchors = [
-                    'firewall', 'vpn', 'router', 'switch', 'ips', 'ids', 'siem', 'xdr', 'edr', 'soar', 'endpoint',
-                    'malware', 'cve', 'vulnerability', 'exploit', 'threat', 'tls', 'ssl', 'certificate', 'certificates', 'ssh',
-                    'linux', 'windows', 'active directory', 'group policy', 'gpo', 'powershell',
-                    'azure', 'aws', 'gcp', 'kubernetes', 'docker', 'terraform', 'ansible', 'devops', 'sre',
-                    'fortinet', 'cisco', 'palo alto', 'okta', 'cloudflare', 'nginx', 'istio', 'gitlab', 'github', 's3', 'ec2', 'vpc'
-                ]
+                # Load scope keywords from JSON with safe defaults
+                non_it_patterns = []
+                it_career_whitelist = []
+                it_anchors = []
+                try:
+                    json_path = os.path.join(os.path.dirname(__file__), 'scope_keywords.json')
+                    with open(json_path, 'r') as f:
+                        data = json.load(f)
+                    non_it_patterns = data.get('non_it_patterns', [])
+                    it_career_whitelist = data.get('it_career_whitelist', [])
+                    it_anchors = data.get('it_anchors', [])
+                except Exception:
+                    # Fallbacks (must mirror defaults in scope_keywords.json)
+                    non_it_patterns = [
+                        'relationship', 'dating', 'marriage', 'breakup', 'love',
+                        'diet', 'nutrition', 'weight loss', 'fitness', 'workout',
+                        'mental health', 'therapy', 'depression', 'anxiety',
+                        'finance', 'stock market', 'stock trading', 'cryptocurrency', 'crypto trading', 'crypto wallet', 'investment', 'tax', 'budget',
+                        'politics', 'election', 'public policy', 'foreign policy', 'economic policy',
+                        'religion', 'spiritual', 'astrology', 'horoscope',
+                        'parenting', 'pregnancy', 'baby',
+                        'travel', 'vacation', 'tourism', 'itinerary',
+                        'sports', 'football', 'soccer', 'basketball',
+                        'cooking', 'recipe', 'food', 'restaurant',
+                        'celebrity', 'gossip', 'entertainment', 'movie', 'music'
+                    ]
+                    it_career_whitelist = [
+                        'resume', 'cv', 'interview', 'career', 'study path', 'roadmap',
+                        'certification', 'certifications', 'soc analyst', 'sre career',
+                        'devops upskilling', 'job market', 'portfolio', 'linkedin'
+                    ]
+                    it_anchors = [
+                        'firewall', 'vpn', 'router', 'switch', 'ips', 'ids', 'siem', 'xdr', 'edr', 'soar', 'endpoint',
+                        'malware', 'cve', 'vulnerability', 'exploit', 'threat', 'tls', 'ssl', 'certificate', 'certificates', 'ssh',
+                        'linux', 'windows', 'active directory', 'group policy', 'gpo', 'powershell',
+                        'azure', 'aws', 'gcp', 'kubernetes', 'docker', 'terraform', 'ansible', 'devops', 'sre',
+                        'fortinet', 'cisco', 'palo alto', 'okta', 'cloudflare', 'nginx', 'istio', 'gitlab', 'github', 's3', 'ec2', 'vpc'
+                    ]
+                # it_anchors loaded above
 
                 # Regex word-boundary matching for single-word non-IT terms; substring for multi-word phrases
                 def matches_non_it_term(text: str) -> bool:

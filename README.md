@@ -117,10 +117,21 @@ Navigate to `http://localhost:8501`
 - **EXA_START_DATE**: ISO date (`YYYY-MM-DD`) as fixed earliest crawl date (ignored if `EXA_START_DAYS > 0`)
 - **EXA_MAX_RESULTS**: Number of results to return (default 3 in code; example above uses 5)
 
+- **LLM_SCOPE_CHECK**: `true|false` (default `false`) — when `true`, an inexpensive LLM check runs only on ambiguous queries that contain both a non‑IT term and an IT anchor. If the LLM says out-of-scope, the query is refused.
+- **LLM_SCOPE_MODEL**: Optional model ID to use for the scope check (defaults to `OPENROUTER_MODEL` if not provided). Example: `meta-llama/llama-3.1-8b-instruct:free`.
+
 ### IT scope guardrails (secrets)
 - **ENFORCE_IT_SCOPE**: `true|false` (default `true`) — when `true`, non‑IT topics get a polite refusal
 - **ALLOW_IT_CAREER_TOPICS**: `true|false` (default `true`) — allows resume/interviews/certs topics
 - **OUT_OF_SCOPE_MESSAGE**: Custom refusal message shown to the user
+
+### IT scope keywords (externalized JSON)
+- The scope guard keywords are editable in `modules/mcp/scope_keywords.json`:
+  - `non_it_patterns`: topics to treat as out-of-scope (uses word-boundary regex for single words; substring for phrases)
+  - `it_career_whitelist`: career-related whitelisted terms
+  - `it_anchors`: strong IT indicators; presence of any anchor prevents false positives and may trigger the optional LLM scope check when ambiguous
+
+If the JSON cannot be read, the app falls back to built-in defaults.
 
 ### Admin UI controls (secrets)
 - **HIDE_SETTINGS_BAR**: `true|false` (default `false`) — hides the entire “Settings” section in the sidebar
@@ -151,6 +162,7 @@ it-chatbot/
 │   └── mcp/
 │       ├── exa_client.py           # Exa search integration
 │       ├── exa_domains.json        # Editable domain categories and vendor map
+│       ├── scope_keywords.json     # Editable scope keywords (non-IT, IT anchors, career whitelist)
 │       └── intent_detector.py      # AI-powered intent routing
 ├── .streamlit/
 │   └── secrets.toml                # API keys and Exa settings (local dev)
