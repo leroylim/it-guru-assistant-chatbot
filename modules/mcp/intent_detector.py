@@ -22,6 +22,7 @@ class AIIntentDetector:
             # --- Scope guard (runs before any external calls) ---
             enforce_scope = bool(st.secrets.get("ENFORCE_IT_SCOPE", True))
             allow_it_career = bool(st.secrets.get("ALLOW_IT_CAREER_TOPICS", True))
+            use_llm_scope_check = bool(st.secrets.get("LLM_SCOPE_CHECK", False))
             query_lower = query.lower().strip()
 
             if enforce_scope:
@@ -78,6 +79,21 @@ class AIIntentDetector:
                         'method': 'scope_guard',
                         'reasoning': 'Detected non-IT topic per scope policy'
                     }
+
+                # Ambiguous case: contains a non-IT term and an IT anchor
+                if use_llm_scope_check and matches_non_it and matches_it_anchor:
+                    try:
+                        llm_in_scope = await self._llm_scope_check(query)
+                        if not llm_in_scope:
+                            return {
+                                'source': 'out_of_scope',
+                                'confidence': 0.9,
+                                'method': 'llm_scope_guard',
+                                'reasoning': 'LLM determined query is out of IT scope'
+                            }
+                    except Exception as _:
+                        # If LLM scope check fails, fall through to allow and continue
+                        pass
 
             api_key = st.secrets.get("OPENROUTER_API_KEY")
             if not api_key:
@@ -147,6 +163,56 @@ class AIIntentDetector:
         except Exception as e:
             st.error(f"AI intent detection error: {str(e)}")
             return self._fallback_classification(query)
+
+    async def _llm_scope_check(self, query: str) -> bool:
+        """Return True if query is within IT scope, else False. Uses lightweight LLM if configured."""
+        api_key = st.secrets.get("OPENROUTER_API_KEY")
+        if not api_key:
+            # Without API key, default to allow to avoid false negatives
+            return True
+        model = st.secrets.get("LLM_SCOPE_MODEL", st.secrets.get("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free"))
+
+        prompt = f"""
+        You judge if a user query is within the scope of an IT assistant focused on:
+        - IT infrastructure, networking, servers, Windows/Linux, Active Directory
+        - Cybersecurity (firewalls, VPN, SIEM, EDR, IAM), vulnerabilities, CVEs
+        - Cloud/DevOps (AWS, Azure, GCP, Kubernetes, Docker, Terraform, CI/CD)
+        - IT career and certifications (if mentioned)
+
+        If the query is primarily about non-IT personal topics (politics, religion, relationships, diet, travel, entertainment, general finance), it is OUT OF SCOPE.
+
+        Query: "{query}"
+
+        Respond with strict JSON only: {{"in_scope": true}}
+        """
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "https://github.com/leroylim/it-guru-assistant-chatbot.git",
+                    "X-Title": "IT-Guru Assistant"
+                },
+                json={
+                    "model": model,
+                    "messages": [
+                        {"role": "user", "content": prompt}
+                    ],
+                    "max_tokens": 20,
+                    "temperature": 0.0
+                }
+            )
+            if response.status_code == 200:
+                try:
+                    result = response.json()
+                    content = result['choices'][0]['message']['content'].strip()
+                    data = json.loads(content)
+                    return bool(data.get("in_scope", True))
+                except Exception:
+                    return True
+            return True
     
     def _fallback_classification(self, query: str) -> Dict[str, Any]:
         """Fallback classification using pattern matching"""
