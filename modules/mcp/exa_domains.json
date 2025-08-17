@@ -15,6 +15,7 @@
       "recordedfuture.com",
       "nist.gov",
       "cisa.gov",
+      "us-cert.cisa.gov",
       "sans.org",
       "owasp.org",
       "mitre.org",
@@ -28,7 +29,16 @@
       "tenable.com",
       "qualys.com",
       "github.com/advisories",
-      "msrc.microsoft.com"
+      "msrc.microsoft.com",
+      "docs.virustotal.com",
+      "fireeye.com/resources",
+      "www.europol.europa.eu/cybercrime",
+      "www.isc2.org",
+      "first.org",
+      "cert.org",
+      "www.enisa.europa.eu",
+      "nvd.nist.gov",
+      "projectzero.googleblog.com"
     ],
     "cloud_devops": [
       "aws.amazon.com",
@@ -38,6 +48,7 @@
       "azure.microsoft.com/blog/topics/security",
       "cloud.google.com/blog/products/identity-security",
       "cloudsecurityalliance.org",
+      "cloudsecurityalliance.org/research",
       "devops.com",
       "containerjournal.com",
       "kubernetes.io",
@@ -49,8 +60,11 @@
       "istio.io",
       "envoyproxy.io",
       "developer.hashicorp.com",
+      "learn.hashicorp.com",
       "helm.sh",
-      "cncf.io"
+      "cncf.io",
+      "opentofu.org/docs",
+      "docs.oracle.com/en/cloud"
     ],
     "it_general": [
       "techcrunch.com",
@@ -72,7 +86,14 @@
       "medium.com",
       "hackernoon.com",
       "freecodecamp.org",
-      "codinghorror.com"
+      "codinghorror.com",
+      "docs.python.org",
+      "docs.oracle.com/javase",
+      "docs.microsoft.com/dotnet",
+      "docs.rust-lang.org",
+      "docs.golang.org",
+      "docs.djangoproject.com",
+      "docs.spring.io"
     ],
     "business_tech": [
       "forbes.com",
@@ -81,7 +102,10 @@
       "fastcompany.com",
       "venturebeat.com",
       "techcrunch.com",
-      "recode.net"
+      "recode.net",
+      "theverge.com",
+      "slashdot.org",
+      "techdirt.com"
     ],
     "research_academic": [
       "arxiv.org",
@@ -90,7 +114,8 @@
       "springer.com",
       "nature.com",
       "sciencedirect.com",
-      "researchgate.net"
+      "researchgate.net",
+      "www.usenix.org"
     ]
     ,
     "identity_access": [
@@ -101,7 +126,20 @@
       "auth0.com/docs",
       "duo.com",
       "duo.com/docs",
-      "learn.microsoft.com/entra"
+      "learn.microsoft.com/entra",
+      "pingidentity.com",
+      "docs.pingidentity.com",
+      "onelogin.com",
+      "developers.onelogin.com",
+      "cyberark.com",
+      "docs.cyberark.com",
+      "www.rsa.com",
+      "community.rsa.com",
+      "backstage.forgerock.com",
+      "www.entrust.com",
+      "support.entrust.com",
+      "thalesgroup.com/en/markets/digital-identity-and-security",
+      "identitymanagementinstitute.org"
     ],
     "observability_monitoring": [
       "docs.datadoghq.com",
@@ -109,7 +147,8 @@
       "docs.splunk.com",
       "www.elastic.co/guide",
       "grafana.com/docs",
-      "prometheus.io/docs"
+      "prometheus.io/docs",
+      "opentelemetry.io/docs"
     ],
     "networking_infra": [
       "www.cisco.com/c/en/us/support",
@@ -117,7 +156,9 @@
       "supportportal.juniper.net",
       "www.arubanetworks.com/techdocs",
       "help.ui.com",
-      "mikrotik.com/download"
+      "mikrotik.com/download",
+      "packetlife.net",
+      "docs.cumulusnetworks.com"
     ],
     "endpoint_security": [
       "learn.microsoft.com/defender",
@@ -135,7 +176,8 @@
       "docs.snyk.io",
       "docs.veracode.com",
       "docs.gitguardian.com",
-      "github.com/advisories"
+      "github.com/advisories",
+      "oss-security.openwall.org"
     ],
     "containers_k8s": [
       "kubernetes.io",
@@ -150,25 +192,31 @@
       "ubuntu.com/security",
       "security.debian.org",
       "access.redhat.com",
-      "kernel.org"
+      "kernel.org",
+      "wiki.archlinux.org",
+      "docs.freebsd.org"
     ],
     "windows_enterprise": [
       "learn.microsoft.com/windows",
       "learn.microsoft.com/windows-server",
       "learn.microsoft.com/windows/security",
-      "learn.microsoft.com/powershell"
+      "learn.microsoft.com/powershell",
+      "msrc.microsoft.com/report"
     ],
     "data_platforms": [
       "www.postgresql.org/docs",
       "dev.mysql.com/doc",
       "www.mongodb.com/docs",
       "redis.io/docs",
-      "clickhouse.com/docs"
+      "clickhouse.com/docs",
+      "www.cockroachlabs.com/docs",
+      "docs.oracle.com/en/database",
+      "docs.snowflake.com"
     ],
     "cloud_iac": [
       "registry.terraform.io",
       "developer.hashicorp.com",
-      "docs.ansible.com",
+      "docs.ansible.com/ansible/latest/index.html",
       "www.pulumi.com/docs",
       "docs.aws.amazon.com/cloudformation"
     ]
@@ -187,7 +235,8 @@
     ,
     "it_service_mgmt": [
       "docs.servicenow.com",
-      "support.atlassian.com/jira-service-management"
+      "support.atlassian.com/jira-service-management",
+      "www.axelos.com/best-practice-solutions/itil"
     ]
     ,
     "storage_infra": [
@@ -210,7 +259,6 @@
     "f5": ["www.f5.com", "my.f5.com", "support.f5.com", "community.f5.com"],
     "citrix": ["www.citrix.com", "docs.citrix.com", "support.citrix.com"],
     "meraki": ["documentation.meraki.com", "meraki.cisco.com"],
-    "cisco meraki": ["documentation.meraki.com", "meraki.cisco.com"],
     "extreme networks": ["www.extremenetworks.com", "documentation.extremenetworks.com"],
     "extreme": ["www.extremenetworks.com", "documentation.extremenetworks.com"],
     "arista": ["www.arista.com", "docs.arista.com"],
@@ -318,6 +366,36 @@
     "symantec": ["knowledge.broadcom.com", "techdocs.broadcom.com"],
     "bitdefender": ["www.bitdefender.com", "www.bitdefender.com/support"],
     "eset": ["help.eset.com", "support.eset.com"],
+    "mcafee": ["www.mcafee.com", "support.mcafee.com"],
+    "avast": ["www.avast.com", "support.avast.com"],
+    "kaspersky": ["www.kaspersky.com", "support.kaspersky.com"],
+    "box": ["support.box.com"],
+    "dropbox": ["help.dropbox.com"],
+    "salesforce": ["help.salesforce.com", "developer.salesforce.com"],
+    "appdynamics": ["docs.appdynamics.com"],
+    "jfrog": ["docs.jfrog.com", "www.jfrog.com"],
+    "sonatype": ["help.sonatype.com"],
+    "commvault": ["documentation.commvault.com", "www.commvault.com"],
+    "ibm spectrum": ["www.ibm.com/support/pages/spectrum-protect"],
+    "western digital": ["support.wdc.com"],
+    "seagate": ["support.seagate.com"],
+    "globalsign": ["support.globalsign.com"],
+    "secureworks": ["www.secureworks.com", "portal.secureworks.com"],
+    "trustwave": ["www.trustwave.com", "community.trustwave.com"],
+    "riverbed": ["support.riverbed.com", "www.riverbed.com"],
+    "hitachi vantara": ["support.hitachivantara.com"],
+    "quantum": ["support.quantum.com", "www.quantum.com"],
+    "arcserve": ["support.arcserve.com", "www.arcserve.com"],
+    "sap": ["help.sap.com", "community.sap.com"],
+    "oracle cloud": ["docs.oracle.com/en/cloud"],
+    "workday": ["community.workday.com"],
+    "zendesk": ["support.zendesk.com", "developer.zendesk.com"],
+    "bitbucket": ["support.atlassian.com/bitbucket-cloud"],
+    "forescout": ["www.forescout.com"],
+    "palo alto cortex": ["cortex.paloaltonetworks.com"],
+    "bmc": ["docs.bmc.com", "www.bmc.com"],
+    "logicmonitor": ["www.logicmonitor.com", "support.logicmonitor.com"],
+    "solarwinds": ["support.solarwinds.com", "documentation.solarwinds.com"],
     "netgear": ["kb.netgear.com", "community.netgear.com"]
   }
 }
