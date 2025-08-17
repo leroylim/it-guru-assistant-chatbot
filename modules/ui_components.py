@@ -157,13 +157,28 @@ class SidebarManager:
     def render_sidebar():
         """Render the complete sidebar"""
         with st.sidebar:
-            st.markdown("# ⚙️ Settings")
-            
-            # Model selection
-            ModelManager.render_model_selector()
-            
-            # Intent detection settings
-            IntentDetectionUI.render_settings()
+            # Secrets-driven visibility flags
+            hide_settings_bar = bool(st.secrets.get("HIDE_SETTINGS_BAR", False))
+            hide_model_selector = bool(st.secrets.get("HIDE_MODEL_SELECTOR", False))
+
+            if not hide_settings_bar:
+                st.markdown("# ⚙️ Settings")
+
+                # Model selection (optional)
+                if not hide_model_selector:
+                    ModelManager.render_model_selector()
+                else:
+                    # Force default model from secrets when selector is hidden
+                    default_model = st.secrets.get("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
+                    st.session_state.selected_model = default_model
+                    st.info(f"🤖 Current Model (locked by admin): {default_model}")
+
+                # Intent detection settings (only when settings bar is visible)
+                IntentDetectionUI.render_settings()
+            else:
+                # If the whole settings bar is hidden, still ensure model is locked to default
+                default_model = st.secrets.get("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
+                st.session_state.selected_model = default_model
             
             # Scope reminder
             if bool(st.secrets.get("ENFORCE_IT_SCOPE", True)):
@@ -173,10 +188,11 @@ class SidebarManager:
                 🔒 Scope: This assistant only handles IT infrastructure, cybersecurity, cloud, DevOps, and system administration topics.
                 """ + career_msg)
 
-            # Refresh button
-            if st.button("🔄 Refresh Models"):
-                st.cache_data.clear()
-                st.rerun()
+            # Refresh button only when settings bar is visible and model selector is enabled
+            if not hide_settings_bar and not hide_model_selector:
+                if st.button("🔄 Refresh Models"):
+                    st.cache_data.clear()
+                    st.rerun()
             
             # Capabilities info
             st.markdown("### 🎯 What I Can Help With")

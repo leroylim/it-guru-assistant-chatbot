@@ -60,6 +60,10 @@ EXA_MAX_RESULTS = 5
 ENFORCE_IT_SCOPE = true                   # default true; set false to disable scope enforcement
 ALLOW_IT_CAREER_TOPICS = true             # allow resume/interviews/certifications (career-only)
 OUT_OF_SCOPE_MESSAGE = "Sorry, I’m focused on IT infrastructure, cybersecurity, cloud, DevOps, and IT careers. Please rephrase your question within this scope."
+
+# Admin UI controls
+HIDE_SETTINGS_BAR = false                 # set true to hide entire Settings sidebar section
+HIDE_MODEL_SELECTOR = false               # set true to hide model selector and lock to OPENROUTER_MODEL
 ```
 
 4. **Run the application**
@@ -95,6 +99,10 @@ Navigate to `http://localhost:8501`
      ENFORCE_IT_SCOPE = true
      ALLOW_IT_CAREER_TOPICS = true
      OUT_OF_SCOPE_MESSAGE = "Sorry, I’m focused on IT infrastructure, cybersecurity, cloud, DevOps, and IT careers. Please rephrase your question within this scope."
+
+     # Admin UI controls
+     HIDE_SETTINGS_BAR = false
+     HIDE_MODEL_SELECTOR = false
      ```
 
 ## ⚙️ Configuration Reference
@@ -113,6 +121,10 @@ Navigate to `http://localhost:8501`
 - **ENFORCE_IT_SCOPE**: `true|false` (default `true`) — when `true`, non‑IT topics get a polite refusal
 - **ALLOW_IT_CAREER_TOPICS**: `true|false` (default `true`) — allows resume/interviews/certs topics
 - **OUT_OF_SCOPE_MESSAGE**: Custom refusal message shown to the user
+
+### Admin UI controls (secrets)
+- **HIDE_SETTINGS_BAR**: `true|false` (default `false`) — hides the entire “Settings” section in the sidebar
+- **HIDE_MODEL_SELECTOR**: `true|false` (default `false`) — hides the model selector and locks the app to `OPENROUTER_MODEL`
 
 ### Environment variables
 - **OPENROUTER_API_KEY**: The app will also read this from environment as a fallback if not in secrets
