@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+build/
+dist/
+.python-version
+
+# Virtual environments
+venv/
+.env
+.env.*
+.venv/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# Caches
+.pytest_cache/
+.mypy_cache/
+.cache/
+coverage/
+.coverage*
+htmlcov/
+
+# Node (just in case)
+node_modules/
+
+# Logs
+*.log
+
+# Project-specific exclusions
+Personal IT Assistant Chatbot_ Building a Portfoli.md
