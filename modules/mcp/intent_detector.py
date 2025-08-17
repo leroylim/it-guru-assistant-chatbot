@@ -27,7 +27,7 @@ class AIIntentDetector:
             query_lower = query.lower().strip()
 
             if enforce_scope:
-                # Load scope keywords from JSON with safe defaults
+                # Load scope keywords from JSON; no hardcoded fallbacks
                 non_it_patterns = []
                 it_career_whitelist = []
                 it_anchors = []
@@ -38,33 +38,8 @@ class AIIntentDetector:
                     non_it_patterns = data.get('non_it_patterns', [])
                     it_career_whitelist = data.get('it_career_whitelist', [])
                     it_anchors = data.get('it_anchors', [])
-                except Exception:
-                    # Fallbacks (must mirror defaults in scope_keywords.json)
-                    non_it_patterns = [
-                        'relationship', 'dating', 'marriage', 'breakup', 'love',
-                        'diet', 'nutrition', 'weight loss', 'fitness', 'workout',
-                        'mental health', 'therapy', 'depression', 'anxiety',
-                        'finance', 'stock market', 'stock trading', 'cryptocurrency', 'crypto trading', 'crypto wallet', 'investment', 'tax', 'budget',
-                        'politics', 'election', 'public policy', 'foreign policy', 'economic policy',
-                        'religion', 'spiritual', 'astrology', 'horoscope',
-                        'parenting', 'pregnancy', 'baby',
-                        'travel', 'vacation', 'tourism', 'itinerary',
-                        'sports', 'football', 'soccer', 'basketball',
-                        'cooking', 'recipe', 'food', 'restaurant',
-                        'celebrity', 'gossip', 'entertainment', 'movie', 'music'
-                    ]
-                    it_career_whitelist = [
-                        'resume', 'cv', 'interview', 'career', 'study path', 'roadmap',
-                        'certification', 'certifications', 'soc analyst', 'sre career',
-                        'devops upskilling', 'job market', 'portfolio', 'linkedin'
-                    ]
-                    it_anchors = [
-                        'firewall', 'vpn', 'router', 'switch', 'ips', 'ids', 'siem', 'xdr', 'edr', 'soar', 'endpoint',
-                        'malware', 'cve', 'vulnerability', 'exploit', 'threat', 'tls', 'ssl', 'certificate', 'certificates', 'ssh',
-                        'linux', 'windows', 'active directory', 'group policy', 'gpo', 'powershell',
-                        'azure', 'aws', 'gcp', 'kubernetes', 'docker', 'terraform', 'ansible', 'devops', 'sre',
-                        'fortinet', 'cisco', 'palo alto', 'okta', 'cloudflare', 'nginx', 'istio', 'gitlab', 'github', 's3', 'ec2', 'vpc'
-                    ]
+                except Exception as e:
+                    st.warning(f"Failed to load scope keywords JSON: {e}. Proceeding with empty keyword sets.")
                 # it_anchors loaded above
 
                 # Regex word-boundary matching for single-word non-IT terms; substring for multi-word phrases
