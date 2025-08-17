@@ -30,7 +30,7 @@ class AIIntentDetector:
                     'diet', 'nutrition', 'weight loss', 'fitness', 'workout',
                     'mental health', 'therapy', 'depression', 'anxiety',
                     'finance', 'stocks', 'crypto', 'investment', 'tax', 'budget',
-                    'politics', 'election', 'government', 'policy',
+                    'politics', 'election', 'government', 'public policy', 'foreign policy', 'economic policy',
                     'religion', 'spiritual', 'astrology', 'horoscope',
                     'parenting', 'pregnancy', 'baby', 'children',
                     'travel', 'vacation', 'tourism', 'itinerary',
