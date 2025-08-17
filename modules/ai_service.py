@@ -19,7 +19,13 @@ class AIService:
     
     def get_system_prompt(self, query_type: str = "general") -> str:
         """Generate system prompt based on query type"""
-        base_prompt = """You are IT-Guru, an expert IT infrastructure and cybersecurity assistant. 
+        enforce_scope = bool(st.secrets.get("ENFORCE_IT_SCOPE", True))
+        allow_it_career = bool(st.secrets.get("ALLOW_IT_CAREER_TOPICS", True))
+        career_note = " You may assist with IT career topics (resume, interviews, certifications) in a professional, practical manner." if allow_it_career else ""
+        scope_rule = (
+            " You must refuse any questions that are not related to IT infrastructure, cybersecurity, cloud platforms, system administration, DevOps, or IT governance." + career_note
+        ) if enforce_scope else ""
+        base_prompt = f"""You are IT-Guru, an expert IT infrastructure and cybersecurity assistant.
         You provide accurate, practical, and up-to-date information on:
         
         - Network infrastructure, security, and troubleshooting
@@ -33,7 +39,7 @@ class AIService:
         - Include relevant examples and commands when helpful
         - Cite sources when using external information
         - If unsure, clearly state limitations
-        - Stay focused on IT/cybersecurity topics
+        - Stay focused on IT/cybersecurity topics.{scope_rule}
         
         For non-IT queries, politely redirect to IT-related topics."""
         
@@ -73,6 +79,22 @@ class AIService:
             
             # Get enhanced context from MCP sources using pure AI intent detection
             enhanced_context = await self.router.get_enhanced_context(query)
+            # Short-circuit if out-of-scope
+            if enhanced_context.get('source') == 'out_of_scope':
+                refusal_msg = enhanced_context.get('context_text') or st.secrets.get(
+                    "OUT_OF_SCOPE_MESSAGE",
+                    "Sorry, I’m focused on IT infrastructure, cybersecurity, cloud, DevOps, and IT careers. Please rephrase your question within this scope."
+                )
+                # Store intent info for UI
+                st.session_state.last_intent_info = {
+                    'method': enhanced_context.get('method', 'scope_guard'),
+                    'confidence': enhanced_context.get('confidence', 0.95),
+                    'source': 'out_of_scope',
+                    'reasoning': enhanced_context.get('reasoning', 'Scope policy refusal'),
+                    'multi_source': False
+                }
+                st.session_state.last_sources = ""
+                return refusal_msg, ""
             
             # Configure OpenAI client to use OpenRouter
             client = openai.OpenAI(
@@ -120,7 +142,7 @@ class AIService:
                 max_tokens=APP_CONFIG.get("max_tokens", 4000),
                 temperature=APP_CONFIG.get("temperature", 0.7),
                 extra_headers={
-                    "HTTP-Referer": "https://github.com/your-username/it-chatbot",
+                    "HTTP-Referer": "https://github.com/leroylim/it-guru-assistant-chatbot.git",
                     "X-Title": "IT-Guru Assistant"
                 }
             )

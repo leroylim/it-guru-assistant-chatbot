@@ -215,6 +215,31 @@ class ExaMCP:
     async def search_content(self, query: str, max_results: int = 3) -> List[Dict]:
         """Search for real-time information using Exa API with intelligent domain selection"""
         try:
+            # Scope guard: skip Exa calls for non-IT topics
+            if bool(st.secrets.get("ENFORCE_IT_SCOPE", True)):
+                ql = query.lower().strip()
+                non_it_patterns = [
+                    'relationship', 'dating', 'marriage', 'breakup', 'love',
+                    'diet', 'nutrition', 'weight loss', 'fitness', 'workout',
+                    'mental health', 'therapy', 'depression', 'anxiety',
+                    'finance', 'stocks', 'crypto', 'investment', 'tax', 'budget',
+                    'politics', 'election', 'government', 'policy',
+                    'religion', 'spiritual', 'astrology', 'horoscope',
+                    'parenting', 'pregnancy', 'baby', 'children',
+                    'travel', 'vacation', 'tourism', 'itinerary',
+                    'sports', 'football', 'soccer', 'basketball',
+                    'cooking', 'recipe', 'food', 'restaurant',
+                    'celebrity', 'gossip', 'entertainment', 'movie', 'music'
+                ]
+                allow_career = bool(st.secrets.get("ALLOW_IT_CAREER_TOPICS", True))
+                it_career_whitelist = [
+                    'resume', 'cv', 'interview', 'career', 'study path', 'roadmap',
+                    'certification', 'certifications', 'soc analyst', 'sre career',
+                    'devops upskilling', 'job market', 'portfolio', 'linkedin'
+                ]
+                if any(p in ql for p in non_it_patterns) and not (allow_career and any(p in ql for p in it_career_whitelist)):
+                    return []
+
             exa_api_key = st.secrets.get("EXA_API_KEY")
             if not exa_api_key:
                 return []

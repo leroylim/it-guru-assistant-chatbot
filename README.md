@@ -35,8 +35,8 @@ An AI-powered chatbot specialized in IT infrastructure and cybersecurity, built 
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/your-username/it-chatbot.git
-cd it-chatbot
+git clone https://github.com/leroylim/it-guru-assistant-chatbot.git
+cd it-guru-assistant-chatbot
 ```
 
 2. **Install dependencies**
@@ -228,7 +228,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 For questions or support, please:
-1. Check the [Issues](https://github.com/your-username/it-chatbot/issues) page
+1. Check the [Issues](https://github.com/leroylim/it-guru-assistant-chatbot/issues) page
 2. Create a new issue with detailed description
 3. Contact the maintainer through GitHub
 

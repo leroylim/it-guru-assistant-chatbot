@@ -34,6 +34,16 @@ class Router:
             'confidence_explanation': self.intent_detector.get_confidence_explanation(intent)
         }
         
+        # Early refusal path for out-of-scope queries
+        if intent['source'] == 'out_of_scope':
+            refusal_msg = st.secrets.get(
+                "OUT_OF_SCOPE_MESSAGE",
+                "Sorry, I’m focused on IT infrastructure, cybersecurity, cloud, DevOps, and IT careers. Please rephrase your question within this scope."
+            )
+            enhanced_context['context_text'] = refusal_msg
+            enhanced_context['multi_source'] = False
+            return enhanced_context
+
         try:
             # Route to appropriate source based on AI classification
             if intent['source'] == 'microsoft_learn':

@@ -65,7 +65,8 @@ st.markdown("### 💬 Chat with IT-Guru")
 ChatInterface.render_chat_history()
 
 # Chat input
-if prompt := st.chat_input("Ask me anything about IT, technology, or current tech news..."):
+placeholder = "Ask about IT infrastructure, cybersecurity, cloud, DevOps, or IT careers (resume, interviews, certs)"
+if prompt := st.chat_input(placeholder):
     # Show user message immediately and store it
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -132,6 +133,6 @@ st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #666; font-size: 0.9em;">
     <p>🔧 IT-Guru Assistant | Built with Streamlit & OpenAI | 
-    <a href="https://github.com/your-username/it-chatbot" target="_blank">View on GitHub</a></p>
+    <a href="https://github.com/leroylim/it-guru-assistant-chatbot.git" target="_blank">View on GitHub</a></p>
 </div>
 """, unsafe_allow_html=True)

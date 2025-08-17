@@ -165,6 +165,14 @@ class SidebarManager:
             # Intent detection settings
             IntentDetectionUI.render_settings()
             
+            # Scope reminder
+            if bool(st.secrets.get("ENFORCE_IT_SCOPE", True)):
+                allow_career = bool(st.secrets.get("ALLOW_IT_CAREER_TOPICS", True))
+                career_msg = " IT career topics (resume, interviews, certifications) are allowed." if allow_career else " IT career topics are currently disabled."
+                st.info("""
+                🔒 Scope: This assistant only handles IT infrastructure, cybersecurity, cloud, DevOps, and system administration topics.
+                """ + career_msg)
+
             # Refresh button
             if st.button("🔄 Refresh Models"):
                 st.cache_data.clear()

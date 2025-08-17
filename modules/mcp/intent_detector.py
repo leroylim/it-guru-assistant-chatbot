@@ -18,6 +18,44 @@ class AIIntentDetector:
     async def detect_intent(self, query: str) -> Dict[str, Any]:
         """Use AI to classify query intent with enhanced prompting"""
         try:
+            # --- Scope guard (runs before any external calls) ---
+            enforce_scope = bool(st.secrets.get("ENFORCE_IT_SCOPE", True))
+            allow_it_career = bool(st.secrets.get("ALLOW_IT_CAREER_TOPICS", True))
+            query_lower = query.lower().strip()
+
+            if enforce_scope:
+                # Non-IT topics to block
+                non_it_patterns = [
+                    'relationship', 'dating', 'marriage', 'breakup', 'love',
+                    'diet', 'nutrition', 'weight loss', 'fitness', 'workout',
+                    'mental health', 'therapy', 'depression', 'anxiety',
+                    'finance', 'stocks', 'crypto', 'investment', 'tax', 'budget',
+                    'politics', 'election', 'government', 'policy',
+                    'religion', 'spiritual', 'astrology', 'horoscope',
+                    'parenting', 'pregnancy', 'baby', 'children',
+                    'travel', 'vacation', 'tourism', 'itinerary',
+                    'sports', 'football', 'soccer', 'basketball',
+                    'cooking', 'recipe', 'food', 'restaurant',
+                    'celebrity', 'gossip', 'entertainment', 'movie', 'music'
+                ]
+                # IT-career/pro topics (allowed when configured)
+                it_career_whitelist = [
+                    'resume', 'cv', 'interview', 'career', 'study path', 'roadmap',
+                    'certification', 'certifications', 'soc analyst', 'sre career',
+                    'devops upskilling', 'job market', 'portfolio', 'linkedin'
+                ]
+
+                matches_non_it = any(pat in query_lower for pat in non_it_patterns)
+                matches_it_career = any(pat in query_lower for pat in it_career_whitelist)
+
+                if matches_non_it and not (allow_it_career and matches_it_career):
+                    return {
+                        'source': 'out_of_scope',
+                        'confidence': 0.95,
+                        'method': 'scope_guard',
+                        'reasoning': 'Detected non-IT topic per scope policy'
+                    }
+
             api_key = st.secrets.get("OPENROUTER_API_KEY")
             if not api_key:
                 return self._fallback_classification(query)
@@ -55,7 +93,7 @@ class AIIntentDetector:
                     headers={
                         "Authorization": f"Bearer {api_key}",
                         "Content-Type": "application/json",
-                        "HTTP-Referer": "https://github.com/your-username/it-chatbot",
+                        "HTTP-Referer": "https://github.com/leroylim/it-guru-assistant-chatbot.git",
                         "X-Title": "IT-Guru Assistant"
                     },
                     json={
