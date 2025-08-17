@@ -54,7 +54,7 @@ class ExaMCP:
         # Identity & Access Management
         if any(word in query_lower for word in [
             'iam', 'identity', 'saml', 'oauth', 'oidc', 'entra', 'azure ad', 'active directory', 'okta', 'auth0', 'duo', 'mfa', 'sso', 'single sign-on',
-            'ping identity', 'onelogin'
+            'ping identity', 'onelogin', 'cyberark', 'rsa', 'securid', 'forgerock', 'entrust', 'thales'
         ]):
             return "identity_access"
 
@@ -72,13 +72,14 @@ class ExaMCP:
 
         # Code security / SCA / SAST / secrets
         if any(word in query_lower for word in [
-            'sast', 'sca', 'snyk', 'veracode', 'gitguardian', 'supply chain security', 'dependency vulnerability', 'github advisories'
+            'sast', 'sca', 'dast', 'sbom', 'cve', 'oss-security', 'openwall', 'snyk', 'veracode', 'gitguardian', 'supply chain security', 'dependency vulnerability', 'github advisories'
         ]):
             return "code_security"
 
         # Observability & monitoring
         if any(word in query_lower for word in [
-            'observability', 'monitoring', 'apm', 'metrics', 'tracing', 'logs', 'datadog', 'new relic', 'grafana', 'prometheus', 'splunk', 'elastic'
+            'observability', 'monitoring', 'apm', 'metrics', 'tracing', 'logs', 'datadog', 'new relic', 'grafana', 'prometheus', 'splunk', 'elastic',
+            'opentelemetry', 'otel'
         ]):
             return "observability_monitoring"
 
@@ -97,7 +98,7 @@ class ExaMCP:
 
         # Linux/Unix topics
         if any(word in query_lower for word in [
-            'linux', 'ubuntu', 'debian', 'red hat', 'rhel', 'kernel', 'systemd', 'bash'
+            'linux', 'ubuntu', 'debian', 'red hat', 'rhel', 'kernel', 'systemd', 'bash', 'arch linux', 'archwiki', 'freebsd'
         ]):
             return "linux_unix"
 
@@ -109,9 +110,15 @@ class ExaMCP:
 
         # Data platforms / databases / caching
         if any(word in query_lower for word in [
-            'postgres', 'postgresql', 'mysql', 'mariadb', 'mongodb', 'redis', 'clickhouse', 'database', 'rdbms'
+            'postgres', 'postgresql', 'mysql', 'mariadb', 'mongodb', 'redis', 'clickhouse', 'database', 'rdbms', 'snowflake', 'cockroachdb', 'oracle db', 'oracle database', 'oracle'
         ]):
             return "data_platforms"
+
+        # IT Service Management (ITIL, ServiceNow, Jira Service Management)
+        if any(word in query_lower for word in [
+            'itil', 'axelos', 'service catalog', 'change management', 'incident management', 'problem management', 'servicenow', 'jira service management'
+        ]):
+            return "it_service_mgmt"
 
         # IaC and cloud provisioning
         if any(word in query_lower for word in [
