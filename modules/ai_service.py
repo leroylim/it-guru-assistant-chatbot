@@ -36,7 +36,7 @@ class AIService:
     
     def get_system_prompt(self, query_type: str = "general") -> str:
         """Generate system prompt based on query type"""
-        enforce_scope = bool(st.secrets.get("ENFORCE_IT_SCOPE", True))
+        enforce_scope = bool(st.secrets.get("ENFORCE_IT_SCOPE", False))
         allow_it_career = bool(st.secrets.get("ALLOW_IT_CAREER_TOPICS", True))
         career_note = " You may assist with IT career topics (resume, interviews, certifications) in a professional, practical manner." if allow_it_career else ""
         scope_rule = (
@@ -49,6 +49,8 @@ class AIService:
         - Cloud platforms (AWS, Azure, GCP) and services
         - Cybersecurity best practices and threat analysis
         - System administration and DevOps practices
+        - Microsoft 365 administration (SharePoint, Teams, OneDrive, Exchange Online)
+        - Databases and data platforms (e.g., Oracle Database, PostgreSQL, MySQL) and related Unix/Linux administration (including Solaris)
         - IT compliance and governance
         
         Guidelines:

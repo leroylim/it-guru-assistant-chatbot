@@ -21,7 +21,7 @@ class AIIntentDetector:
         """Use AI to classify query intent with enhanced prompting"""
         try:
             # --- Scope guard (runs before any external calls) ---
-            enforce_scope = bool(st.secrets.get("ENFORCE_IT_SCOPE", True))
+            enforce_scope = bool(st.secrets.get("ENFORCE_IT_SCOPE", False))
             allow_it_career = bool(st.secrets.get("ALLOW_IT_CAREER_TOPICS", True))
             use_llm_scope_check = bool(st.secrets.get("LLM_SCOPE_CHECK", False))
             query_lower = query.lower().strip()
@@ -216,7 +216,11 @@ class AIIntentDetector:
                 'reasoning': 'Simple greeting or conversational query, no external sources needed'
             }
         
-        if any(word in query_lower for word in ['microsoft', 'azure', 'office', 'windows', 'powershell']):
+        # Microsoft-related (expanded to include SharePoint/M365/Graph)
+        if any(word in query_lower for word in [
+            'microsoft', 'azure', 'office', 'windows', 'powershell',
+            'sharepoint', 'microsoft 365', 'm365', 'exchange online', 'onedrive', 'teams', 'entra', 'graph api', 'microsoft graph'
+        ]):
             return {
                 'source': 'microsoft_learn',
                 'confidence': 0.7,

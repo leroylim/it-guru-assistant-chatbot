@@ -30,6 +30,15 @@ class ExaMCP:
         """Categorize query to select appropriate domains"""
         query_lower = query.lower()
         
+        # Authoritative cybersecurity orgs: force cybersecurity to avoid collisions (e.g., 'san' vs 'sans')
+        if any(
+            re.search(r"\b" + kw + r"\b", query_lower)
+            for kw in [
+                r"sans", r"isc2", r"isc²", r"owasp", r"mitre", r"nist", r"cisa", r"cloud security alliance"
+            ]
+        ):
+            return "cybersecurity"
+        
         # SASE / SSE / Zero Trust Access
         if any(word in query_lower for word in [
             'sase', 'sse', 'zero trust', 'ztna', 'casb', 'swg', 'prisma access', 'zscaler', 'netskope'
@@ -42,13 +51,16 @@ class ExaMCP:
         ]):
             return "backup_dr"
 
-        # Storage infrastructure (NAS/SAN/array)
-        if any(word in query_lower for word in [
-            'storage', 'nas', 'san', 'iscsi', 'nfs', 'smb', 'raid',
-            'dell emc', 'powerscale', 'powerstore', 'isilon',
-            'hpe nimble', 'hpe 3par', 'hpe alletra', 'nimble', '3par', 'alletra',
-            'synology', 'qnap', 'netapp', 'pure storage', 'purestorage'
-        ]):
+        # Storage infrastructure (NAS/SAN/array) with whole-word matching to avoid 'san' matching 'sans'
+        if any(
+            re.search(r"\b" + re.escape(word) + r"\b", query_lower)
+            for word in [
+                'storage', 'nas', 'san', 'iscsi', 'nfs', 'smb', 'raid',
+                'dell emc', 'powerscale', 'powerstore', 'isilon',
+                'hpe nimble', 'hpe 3par', 'hpe alletra', 'nimble', '3par', 'alletra',
+                'synology', 'qnap', 'netapp', 'pure storage', 'purestorage'
+            ]
+        ):
             return "storage_infra"
 
         # Identity & Access Management
@@ -98,7 +110,7 @@ class ExaMCP:
 
         # Linux/Unix topics
         if any(word in query_lower for word in [
-            'linux', 'ubuntu', 'debian', 'red hat', 'rhel', 'kernel', 'systemd', 'bash', 'arch linux', 'archwiki', 'freebsd'
+            'linux', 'ubuntu', 'debian', 'red hat', 'rhel', 'kernel', 'systemd', 'bash', 'arch linux', 'archwiki', 'freebsd', 'solaris'
         ]):
             return "linux_unix"
 
@@ -159,11 +171,25 @@ class ExaMCP:
         # Combine and deduplicate
         return list(set(base_domains + category_domains))
 
+    def _keyword_in_text(self, key: str, text: str) -> bool:
+        """Match vendor keys more precisely.
+        - Single tokens: whole-word regex
+        - Multi-word or with non-word chars: substring
+        """
+        k = key.strip().lower()
+        if not k:
+            return False
+        # If key is a single word of letters/numbers (e.g., 'san', 'panos', 'isc2'), use whole-word
+        if re.match(r"^[\w]+$", k):
+            return re.search(r"\b" + re.escape(k) + r"\b", text) is not None
+        # Otherwise substring is fine (handles 'palo alto', 'azure ad', 'cloud security alliance', 'isc²')
+        return k in text
+
     def _vendor_domains(self, query_lower: str) -> List[str]:
         """Add vendor-specific domains when keywords are present in the query."""
         hits: List[str] = []
         for key, domains in self.vendor_map.items():
-            if key in query_lower:
+            if self._keyword_in_text(key, query_lower):
                 hits.extend(domains)
         return list(set(hits))
     
@@ -265,7 +291,8 @@ class ExaMCP:
             "programming": f"{query} programming development code software framework",
             "business_tech": f"{query} technology business industry trends innovation",
             "research_academic": f"{query} research study analysis methodology findings",
-            "it_general": f"{query} IT technology infrastructure systems network"
+            "it_general": f"{query} IT technology infrastructure systems network",
+            "data_platforms": f"{query} installation guide reference manual oracle database solaris svcstart manifest pkgadd"
         }
         return enhancements.get(category, f"{query} technology")
     
@@ -283,7 +310,7 @@ class ExaMCP:
         """Search for real-time information using Exa API with intelligent domain selection"""
         try:
             # Scope guard: skip Exa calls for non-IT topics
-            if bool(st.secrets.get("ENFORCE_IT_SCOPE", True)):
+            if bool(st.secrets.get("ENFORCE_IT_SCOPE", False)):
                 ql = query.lower().strip()
                 # Load scope keywords from JSON with safe defaults
                 non_it_patterns = []
@@ -341,7 +368,12 @@ class ExaMCP:
                     vendor_domains_used = vendor_boost[:]
             else:
                 # No explicit vendor in the query: try to inherit vendor context from previous sources for follow-ups
-                if not self._is_comparative(ql):
+                # Skip inheritance if authoritative orgs are present (e.g., SANS/ISC2/etc.)
+                authoritative = any(
+                    re.search(r"\b" + kw + r"\b", ql)
+                    for kw in [r"sans", r"isc2", r"isc²", r"owasp", r"mitre", r"nist", r"cisa", r"cloud security alliance"]
+                )
+                if not self._is_comparative(ql) and not authoritative:
                     inferred_vendor_domains = self._infer_vendor_from_last_sources()
                     if inferred_vendor_domains:
                         domains = inferred_vendor_domains
@@ -361,6 +393,10 @@ class ExaMCP:
                     start_date = (datetime.utcnow() - timedelta(days=days)).strftime("%Y-%m-%d")
             except Exception:
                 pass
+            
+            # If Oracle Database on Solaris or similar install docs are requested, allow older docs by removing date filter
+            ql = query.lower()
+            oracle_solaris_install = any(kw in ql for kw in ["oracle", "oracle database"]) and "solaris" in ql and any(k in ql for k in ["install", "installation", "setup"])
             async with aiohttp.ClientSession() as session:
                 # First attempt: with current domains and date filter
                 async with session.post(
@@ -369,12 +405,16 @@ class ExaMCP:
                         "Authorization": f"Bearer {exa_api_key}",
                         "Content-Type": "application/json"
                     },
-                    json={
+                    json=({
                         "query": enhanced_query,
                         "num_results": max_results,
                         "include_domains": domains,
                         "start_crawl_date": start_date
-                    }
+                    } if not oracle_solaris_install else {
+                        "query": enhanced_query,
+                        "num_results": max_results,
+                        "include_domains": domains
+                    })
                 ) as response:
                     results: List[Dict] = []
                     if response.status == 200:

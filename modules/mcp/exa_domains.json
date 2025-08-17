@@ -262,7 +262,9 @@
       "access.redhat.com",
       "kernel.org",
       "wiki.archlinux.org",
-      "docs.freebsd.org"
+      "docs.freebsd.org",
+      "docs.oracle.com/solaris",
+      "www.oracle.com/solaris"
     ],
     "windows_enterprise": [
       "learn.microsoft.com/windows",
@@ -571,6 +573,18 @@
     "thales": ["www.thalesgroup.com", "support.thalesgroup.com"],
     "entrust": ["www.entrust.com", "support.entrust.com"],
     "bigid": ["www.bigid.com", "support.bigid.com"],
-    "securiti": ["www.securiti.ai", "docs.securiti.ai"]
+    "securiti": ["www.securiti.ai", "docs.securiti.ai"],
+    "sans": ["sans.org"],
+    "sans institute": ["sans.org"],
+    "isc2": ["www.isc2.org"],
+    "isc²": ["www.isc2.org"],
+    "owasp": ["owasp.org"],
+    "mitre": ["mitre.org", "attack.mitre.org"],
+    "nist": ["nist.gov", "nvd.nist.gov"],
+    "cisa": ["cisa.gov", "us-cert.cisa.gov"],
+    "cloud security alliance": ["cloudsecurityalliance.org", "cloudsecurityalliance.org/research"],
+    "oracle": ["docs.oracle.com/en/database", "docs.oracle.com/solaris", "www.oracle.com/database", "www.oracle.com/solaris", "blogs.oracle.com"],
+    "oracle database": ["docs.oracle.com/en/database", "www.oracle.com/database"],
+    "solaris": ["docs.oracle.com/solaris", "www.oracle.com/solaris"]
   }
 }
