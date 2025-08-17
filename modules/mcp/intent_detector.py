@@ -5,6 +5,7 @@ import asyncio
 import json
 import httpx
 import streamlit as st
+import re
 from typing import Dict, Any
 
 
@@ -24,15 +25,15 @@ class AIIntentDetector:
             query_lower = query.lower().strip()
 
             if enforce_scope:
-                # Non-IT topics to block
+                # Non-IT topics to block (use specific phrases to avoid collisions)
                 non_it_patterns = [
                     'relationship', 'dating', 'marriage', 'breakup', 'love',
                     'diet', 'nutrition', 'weight loss', 'fitness', 'workout',
                     'mental health', 'therapy', 'depression', 'anxiety',
-                    'finance', 'stocks', 'crypto', 'investment', 'tax', 'budget',
-                    'politics', 'election', 'government', 'public policy', 'foreign policy', 'economic policy',
+                    'finance', 'stock market', 'stock trading', 'cryptocurrency', 'crypto trading', 'crypto wallet', 'investment', 'tax', 'budget',
+                    'politics', 'election', 'public policy', 'foreign policy', 'economic policy',
                     'religion', 'spiritual', 'astrology', 'horoscope',
-                    'parenting', 'pregnancy', 'baby', 'children',
+                    'parenting', 'pregnancy', 'baby',
                     'travel', 'vacation', 'tourism', 'itinerary',
                     'sports', 'football', 'soccer', 'basketball',
                     'cooking', 'recipe', 'food', 'restaurant',
@@ -45,10 +46,32 @@ class AIIntentDetector:
                     'devops upskilling', 'job market', 'portfolio', 'linkedin'
                 ]
 
-                matches_non_it = any(pat in query_lower for pat in non_it_patterns)
-                matches_it_career = any(pat in query_lower for pat in it_career_whitelist)
+                # Common IT anchors: if present, prefer allowing the query
+                it_anchors = [
+                    'firewall', 'vpn', 'router', 'switch', 'ips', 'ids', 'siem', 'xdr', 'edr', 'soar', 'endpoint',
+                    'malware', 'cve', 'vulnerability', 'exploit', 'threat', 'tls', 'ssl', 'certificate', 'certificates', 'ssh',
+                    'linux', 'windows', 'active directory', 'group policy', 'gpo', 'powershell',
+                    'azure', 'aws', 'gcp', 'kubernetes', 'docker', 'terraform', 'ansible', 'devops', 'sre',
+                    'fortinet', 'cisco', 'palo alto', 'okta', 'cloudflare', 'nginx', 'istio', 'gitlab', 'github', 's3', 'ec2', 'vpc'
+                ]
 
-                if matches_non_it and not (allow_it_career and matches_it_career):
+                # Regex word-boundary matching for single-word non-IT terms; substring for multi-word phrases
+                def matches_non_it_term(text: str) -> bool:
+                    for term in non_it_patterns:
+                        if ' ' in term:
+                            if term in text:
+                                return True
+                        else:
+                            if re.search(r'\b' + re.escape(term) + r'\b', text):
+                                return True
+                    return False
+
+                matches_non_it = matches_non_it_term(query_lower)
+                matches_it_career = any(pat in query_lower for pat in it_career_whitelist)
+                matches_it_anchor = any(anchor in query_lower for anchor in it_anchors)
+
+                # Block only if clearly non-IT and no strong IT anchors present
+                if matches_non_it and not matches_it_anchor and not (allow_it_career and matches_it_career):
                     return {
                         'source': 'out_of_scope',
                         'confidence': 0.95,

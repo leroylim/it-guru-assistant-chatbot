@@ -5,6 +5,7 @@ import aiohttp
 import json
 import os
 import streamlit as st
+import re
 from datetime import datetime, timedelta
 from typing import Dict, Any, List
 
@@ -222,8 +223,8 @@ class ExaMCP:
                     'relationship', 'dating', 'marriage', 'breakup', 'love',
                     'diet', 'nutrition', 'weight loss', 'fitness', 'workout',
                     'mental health', 'therapy', 'depression', 'anxiety',
-                    'finance', 'stocks', 'crypto', 'investment', 'tax', 'budget',
-                    'politics', 'election', 'government', 'public policy', 'foreign policy', 'economic policy',
+                    'finance', 'stock market', 'stock trading', 'cryptocurrency', 'crypto trading', 'crypto wallet', 'investment', 'tax', 'budget',
+                    'politics', 'election', 'public policy', 'foreign policy', 'economic policy',
                     'religion', 'spiritual', 'astrology', 'horoscope',
                     'parenting', 'pregnancy', 'baby', 'children',
                     'travel', 'vacation', 'tourism', 'itinerary',
@@ -237,7 +238,29 @@ class ExaMCP:
                     'certification', 'certifications', 'soc analyst', 'sre career',
                     'devops upskilling', 'job market', 'portfolio', 'linkedin'
                 ]
-                if any(p in ql for p in non_it_patterns) and not (allow_career and any(p in ql for p in it_career_whitelist)):
+                it_anchors = [
+                    'firewall', 'vpn', 'router', 'switch', 'ips', 'ids', 'siem', 'xdr', 'edr', 'soar', 'endpoint',
+                    'malware', 'cve', 'vulnerability', 'exploit', 'threat', 'tls', 'ssl', 'certificate', 'certificates', 'ssh',
+                    'linux', 'windows', 'active directory', 'group policy', 'gpo', 'powershell',
+                    'azure', 'aws', 'gcp', 'kubernetes', 'docker', 'terraform', 'ansible', 'devops', 'sre',
+                    'fortinet', 'cisco', 'palo alto', 'okta', 'cloudflare', 'nginx', 'istio', 'gitlab', 'github', 's3', 'ec2', 'vpc'
+                ]
+
+                def matches_non_it_term(text: str) -> bool:
+                    for term in non_it_patterns:
+                        if ' ' in term:
+                            if term in text:
+                                return True
+                        else:
+                            if re.search(r'\b' + re.escape(term) + r'\b', text):
+                                return True
+                    return False
+
+                matches_non_it = matches_non_it_term(ql)
+                matches_it_career = any(p in ql for p in it_career_whitelist)
+                matches_it_anchor = any(a in ql for a in it_anchors)
+
+                if matches_non_it and not matches_it_anchor and not (allow_career and matches_it_career):
                     return []
 
             exa_api_key = st.secrets.get("EXA_API_KEY")
