@@ -30,6 +30,18 @@ class ExaMCP:
         """Categorize query to select appropriate domains"""
         query_lower = query.lower()
         
+        # SASE / SSE / Zero Trust Access
+        if any(word in query_lower for word in [
+            'sase', 'sse', 'zero trust', 'ztna', 'casb', 'swg', 'prisma access', 'zscaler', 'netskope'
+        ]):
+            return "sase_sse"
+
+        # Backup and Disaster Recovery
+        if any(word in query_lower for word in [
+            'backup', 'backups', 'dr', 'disaster recovery', 'rpo', 'rto', 'snapshot', 'snapshots', 'veeam', 'rubrik', 'cohesity'
+        ]):
+            return "backup_dr"
+
         # Identity & Access Management
         if any(word in query_lower for word in [
             'iam', 'identity', 'saml', 'oauth', 'oidc', 'entra', 'azure ad', 'active directory', 'okta', 'auth0', 'duo', 'mfa', 'sso', 'single sign-on'
@@ -62,7 +74,8 @@ class ExaMCP:
 
         # Networking & infrastructure vendors
         if any(word in query_lower for word in [
-            'router', 'switch', 'bgp', 'ospf', 'sd-wan', 'firewall', 'vpn', 'cisco', 'juniper', 'aruba', 'mikrotik', 'f5', 'citrix', 'load balancer'
+            'router', 'switch', 'bgp', 'ospf', 'sd-wan', 'firewall', 'vpn', 'cisco', 'juniper', 'aruba', 'mikrotik', 'f5', 'citrix', 'load balancer',
+            'meraki', 'extreme', 'arista'
         ]):
             return "networking_infra"
 

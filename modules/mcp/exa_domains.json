@@ -172,6 +172,23 @@
       "www.pulumi.com/docs",
       "docs.aws.amazon.com/cloudformation"
     ]
+    ,
+    "backup_dr": [
+      "www.veeam.com",
+      "helpcenter.veeam.com",
+      "docs.rubrik.com",
+      "docs.cohesity.com"
+    ],
+    "sase_sse": [
+      "help.zscaler.com",
+      "docs.netskope.com",
+      "docs.prisma.cloud"
+    ]
+    ,
+    "it_service_mgmt": [
+      "docs.servicenow.com",
+      "support.atlassian.com/jira-service-management"
+    ]
   },
   "vendor_map": {
     "cisco": ["advisories.cisco.com", "blogs.cisco.com", "talosintelligence.com", "www.cisco.com/c/en/us/support"],
@@ -182,6 +199,34 @@
     "sonicwall": ["www.sonicwall.com", "psirt.sonicwall.com", "www.sonicwall.com/support"],
     "f5": ["www.f5.com", "my.f5.com", "support.f5.com", "community.f5.com"],
     "citrix": ["www.citrix.com", "docs.citrix.com", "support.citrix.com"],
+    "meraki": ["documentation.meraki.com", "meraki.cisco.com"],
+    "cisco meraki": ["documentation.meraki.com", "meraki.cisco.com"],
+    "extreme networks": ["www.extremenetworks.com", "documentation.extremenetworks.com"],
+    "extreme": ["www.extremenetworks.com", "documentation.extremenetworks.com"],
+    "arista": ["www.arista.com"],
+    "netapp": ["docs.netapp.com"],
+    "pure storage": ["support.purestorage.com"],
+    "purestorage": ["support.purestorage.com"],
+    "nutanix": ["docs.nutanix.com"],
+    "veeam": ["www.veeam.com", "helpcenter.veeam.com"],
+    "cohesity": ["docs.cohesity.com"],
+    "rubrik": ["docs.rubrik.com"],
+    "snowflake": ["docs.snowflake.com"],
+    "databricks": ["docs.databricks.com"],
+    "wiz": ["wiz.io", "docs.wiz.io"],
+    "lacework": ["lacework.com", "docs.lacework.net"],
+    "prisma cloud": ["docs.prisma.cloud"],
+    "orca security": ["orca.security", "docs.orca.security"],
+    "palo alto networks": ["paloaltonetworks.com", "docs.paloaltonetworks.com", "unit42.paloaltonetworks.com"],
+    "pan-os": ["paloaltonetworks.com", "docs.paloaltonetworks.com"],
+    "panos": ["paloaltonetworks.com", "docs.paloaltonetworks.com"],
+    "microsoft defender": ["learn.microsoft.com", "msrc.microsoft.com"],
+    "ms defender": ["learn.microsoft.com", "msrc.microsoft.com"],
+    "defender for endpoint": ["learn.microsoft.com", "msrc.microsoft.com"],
+    "azure ad": ["learn.microsoft.com"],
+    "entra": ["learn.microsoft.com"],
+    "entra id": ["learn.microsoft.com"],
+    "s1": ["support.sentinelone.com"],
     "vmware": ["www.vmware.com", "kb.vmware.com", "docs.vmware.com"],
     "microsoft": ["learn.microsoft.com", "msrc.microsoft.com", "techcommunity.microsoft.com"],
     "google cloud": ["cloud.google.com", "cloud.google.com/docs", "cloud.google.com/blog/products/identity-security"],
@@ -193,11 +238,17 @@
     "duo": ["duo.com", "duo.com/blog", "duo.com/docs"],
     "zscaler": ["www.zscaler.com", "help.zscaler.com", "trust.zscaler.com"],
     "netskope": ["www.netskope.com", "docs.netskope.com"],
-    "sophos": ["www.sophos.com", "support.sophos.com", "community.sophos.com"],
-    "trend micro": ["www.trendmicro.com", "docs.trendmicro.com", "success.trendmicro.com"],
-    "trellix": ["www.trellix.com", "docs.trellix.com"],
+    "sophos": ["www.sophos.com", "support.sophos.com", "community.sophos.com", "docs.sophos.com"],
     "crowdstrike": ["www.crowdstrike.com", "www.crowdstrike.com/blog", "www.crowdstrike.com/resources"],
     "sentinelone": ["www.sentinelone.com", "www.sentinelone.com/blog", "support.sentinelone.com"],
+    "trend micro": ["www.trendmicro.com", "docs.trendmicro.com", "success.trendmicro.com"],
+    "watchguard": ["www.watchguard.com", "www.watchguard.com/help"],
+    "ivanti": ["help.ivanti.com"],
+    "jamf": ["docs.jamf.com"],
+    "manageengine": ["www.manageengine.com"],
+    "servicenow": ["docs.servicenow.com"],
+    "gitguardian": ["docs.gitguardian.com", "www.gitguardian.com"],
+    "trellix": ["www.trellix.com", "docs.trellix.com"],
     "mde": ["learn.microsoft.com/defender", "security.microsoft.com"],
     "splunk": ["www.splunk.com", "docs.splunk.com"],
     "elastic": ["www.elastic.co", "www.elastic.co/guide", "www.elastic.co/security"],
@@ -236,7 +287,6 @@
     "new relic": ["newrelic.com", "docs.newrelic.com"],
     "pagerduty": ["www.pagerduty.com", "support.pagerduty.com"],
     "opsgenie": ["www.atlassian.com/software/opsgenie", "support.atlassian.com/opsgenie"],
-    "gitguardian": ["www.gitguardian.com", "docs.gitguardian.com"],
     "okta workforce identity": ["okta.com", "help.okta.com", "developer.okta.com"]
   }
 }
