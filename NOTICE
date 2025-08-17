@@ -1,0 +1,14 @@
+IT-Guru Assistant — Third-Party Notices
+
+This project uses the following third-party services and libraries. Each is governed by its own license/terms:
+
+- Streamlit — https://streamlit.io/ (License: Apache-2.0) — https://github.com/streamlit/streamlit/blob/develop/LICENSE
+- Requests (Python) — https://docs.python-requests.org/ (License: Apache-2.0) — https://github.com/psf/requests/blob/main/LICENSE
+- OpenRouter API — https://openrouter.ai/ (Terms) — https://openrouter.ai/terms
+- Exa Search API — https://exa.ai/ (Terms) — https://exa.ai/terms
+- Microsoft Learn — https://learn.microsoft.com/ (Terms) — https://learn.microsoft.com/legal/
+- AWS Documentation — https://docs.aws.amazon.com/ (Terms) — https://aws.amazon.com/agreements/
+
+Notes:
+- Trademarks belong to their respective owners. Use here does not imply endorsement.
+- Source code in this repository is licensed under the MIT License (see LICENSE).

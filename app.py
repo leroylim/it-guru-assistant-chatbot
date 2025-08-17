@@ -55,6 +55,53 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# Fixed-position credits below the chat input (sit at the very bottom)
+st.markdown(
+    """
+<style>
+  .credits-bar { position: fixed; left: 0; right: 0; bottom: 0; text-align: center; color: #777; font-size: 0.9em; line-height: 1.35; z-index: 999; pointer-events: auto; background: rgba(255,255,255,0.9); backdrop-filter: blur(2px); padding: 6px 8px; border-top: 1px solid #eee; }
+  .credits-bar a { color: inherit; text-decoration: underline; }
+</style>
+<div class=\"credits-bar\" id=\"credits-bar\">
+  <div>
+    Built by <strong>Han Yong Lim</strong>
+    · <a href=\"https://github.com/leroylim\" target=\"_blank\">GitHub</a>
+    · <a href=\"https://www.linkedin.com/in/han-yong-lim-312b88a7/\" target=\"_blank\">LinkedIn</a>
+  </div>
+  <div>
+    Streamlit · OpenRouter · Exa · MS Learn · AWS Docs · © 2025 MIT ·
+    <a href=\"https://github.com/leroylim/it-guru-assistant-chatbot.git\" target=\"_blank\">View on GitHub</a>
+  </div>
+</div>
+<script>
+  (function() {
+    function positionChatInputAboveCredits() {
+      try {
+        var bar = document.getElementById('credits-bar');
+        var chat = document.querySelector('[data-testid="stChatInput"]');
+        if (!bar || !chat) return;
+        var barRect = bar.getBoundingClientRect();
+        var barH = barRect.height || bar.offsetHeight || 32;
+        var gap = 6; // small gap between credits and chat input
+        // Move chat input above the credits bar
+        chat.style.bottom = (barH + gap) + 'px';
+      } catch (e) { /* noop */ }
+    }
+
+    // Initial and periodic updates
+    positionChatInputAboveCredits();
+    window.addEventListener('resize', positionChatInputAboveCredits);
+
+    // Observe DOM changes to reposition when Streamlit rerenders
+    var obs = new MutationObserver(function() { positionChatInputAboveCredits(); });
+    obs.observe(document.body, { childList: true, subtree: true });
+    setInterval(positionChatInputAboveCredits, 1000);
+  })();
+  </script>
+""",
+    unsafe_allow_html=True,
+)
+
 # Render sidebar
 SidebarManager.render_sidebar()
 
@@ -210,29 +257,5 @@ if prompt:
     # Rerun to render full history
     st.rerun()
 
-# Footer
+# Minimal footer (no extra links; credits bar already includes GitHub link)
 st.markdown("---")
-st.markdown(
-    """
-<div style="text-align: center; color: #666; font-size: 0.9em; line-height: 1.6;">
-  <p><strong>🔧 IT-Guru Assistant</strong></p>
-  <p>
-    Built by <strong>Han Yong Lim</strong>
-    · <a href="https://github.com/leroylim" target="_blank">GitHub</a>
-    · <a href="https://www.linkedin.com/in/han-yong-lim-312b88a7/" target="_blank">LinkedIn</a>
-  </p>
-  <p>
-    Credits: <a href="https://streamlit.io/" target="_blank">Streamlit</a> ·
-    <a href="https://openrouter.ai/" target="_blank">OpenRouter</a> ·
-    <a href="https://exa.ai/" target="_blank">Exa</a> ·
-    <a href="https://learn.microsoft.com/" target="_blank">Microsoft Learn</a> ·
-    <a href="https://docs.aws.amazon.com/" target="_blank">AWS Documentation</a>
-  </p>
-  <p>
-    <a href="https://github.com/leroylim/it-guru-assistant-chatbot.git" target="_blank">View on GitHub</a>
-  </p>
-  <p style="font-size: 0.85em; color: #888;">© 2025 Han Yong Lim. MIT License.</p>
-  </div>
-""",
-    unsafe_allow_html=True,
-)

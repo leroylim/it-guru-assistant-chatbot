@@ -277,6 +277,12 @@ def manage_conversation_context(chat_history, max_context=10):
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+### Trademarks
+Microsoft, AWS, Streamlit, Exa, and OpenRouter are trademarks of their respective owners. Use herein does not imply endorsement.
+
+### Contributions
+By contributing to this repository, you agree that your contributions will be licensed under the MIT License of this project.
+
 ## 👤 Author
 
 Built by **Han Yong Lim**  
