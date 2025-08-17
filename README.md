@@ -55,6 +55,11 @@ EXA_API_KEY = "your-exa-api-key-here"
 EXA_START_DAYS = 180          # rolling window, overrides EXA_START_DATE if > 0
 # EXA_START_DATE = "2025-02-01" # optional fixed date
 EXA_MAX_RESULTS = 5
+
+# IT scope guardrails (enable strict IT-only scope)
+ENFORCE_IT_SCOPE = true                   # default true; set false to disable scope enforcement
+ALLOW_IT_CAREER_TOPICS = true             # allow resume/interviews/certifications (career-only)
+OUT_OF_SCOPE_MESSAGE = "Sorry, I’m focused on IT infrastructure, cybersecurity, cloud, DevOps, and IT careers. Please rephrase your question within this scope."
 ```
 
 4. **Run the application**
@@ -85,7 +90,37 @@ Navigate to `http://localhost:8501`
      EXA_API_KEY = "exa_..."
      EXA_START_DAYS = 180
      EXA_MAX_RESULTS = 5
+
+     # IT scope guardrails
+     ENFORCE_IT_SCOPE = true
+     ALLOW_IT_CAREER_TOPICS = true
+     OUT_OF_SCOPE_MESSAGE = "Sorry, I’m focused on IT infrastructure, cybersecurity, cloud, DevOps, and IT careers. Please rephrase your question within this scope."
      ```
+
+## ⚙️ Configuration Reference
+
+### Required secrets
+- **OPENROUTER_API_KEY**: OpenRouter API key for LLM responses and small classification calls
+- **OPENROUTER_MODEL**: Default model ID (e.g., `meta-llama/llama-3.1-8b-instruct:free`)
+- **EXA_API_KEY**: Exa search API key (for real-time web results)
+
+### Optional secrets
+- **EXA_START_DAYS**: Integer rolling window for recency filtering (e.g., `7`, `30`, `180`)
+- **EXA_START_DATE**: ISO date (`YYYY-MM-DD`) as fixed earliest crawl date (ignored if `EXA_START_DAYS > 0`)
+- **EXA_MAX_RESULTS**: Number of results to return (default 3 in code; example above uses 5)
+
+### IT scope guardrails (secrets)
+- **ENFORCE_IT_SCOPE**: `true|false` (default `true`) — when `true`, non‑IT topics get a polite refusal
+- **ALLOW_IT_CAREER_TOPICS**: `true|false` (default `true`) — allows resume/interviews/certs topics
+- **OUT_OF_SCOPE_MESSAGE**: Custom refusal message shown to the user
+
+### Environment variables
+- **OPENROUTER_API_KEY**: The app will also read this from environment as a fallback if not in secrets
+  - Example: `export OPENROUTER_API_KEY=sk-or-...`
+
+Notes:
+- Exa keys (`EXA_*`) are read from Streamlit secrets in this app; prefer secrets over env for those.
+- See `modules/ai_service.py`, `modules/mcp/intent_detector.py`, `modules/mcp/exa_client.py`, and `modules/mcp/router.py` for how these settings are used.
 
 3. **Go Live**
    - Click "Deploy" - your app goes live immediately
