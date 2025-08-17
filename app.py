@@ -69,7 +69,8 @@ st.markdown(
     · <a href=\"https://www.linkedin.com/in/han-yong-lim-312b88a7/\" target=\"_blank\">LinkedIn</a>
   </div>
   <div>
-    Streamlit · OpenRouter · Exa · MS Learn · AWS Docs · © 2025 MIT ·
+    © 2025 MIT ·
+    <a href=\"https://github.com/leroylim/it-guru-assistant-chatbot#credits\" target=\"_blank\">Credits</a> ·
     <a href=\"https://github.com/leroylim/it-guru-assistant-chatbot.git\" target=\"_blank\">View on GitHub</a>
   </div>
 </div>
