@@ -331,18 +331,21 @@ class ExaMCP:
             domains = self._get_search_domains(category)
             ql = query.lower()
             vendor_boost = self._vendor_domains(ql)
+            vendor_domains_used: List[str] = []
             if vendor_boost:
                 # If not a comparative query, restrict to vendor domains to avoid cross-vendor leakage (e.g., Cisco on Palo Alto queries)
                 if self._is_comparative(ql):
                     domains = list(set(domains + vendor_boost))
                 else:
                     domains = vendor_boost
+                    vendor_domains_used = vendor_boost[:]
             else:
                 # No explicit vendor in the query: try to inherit vendor context from previous sources for follow-ups
                 if not self._is_comparative(ql):
                     inferred_vendor_domains = self._infer_vendor_from_last_sources()
                     if inferred_vendor_domains:
                         domains = inferred_vendor_domains
+                        vendor_domains_used = inferred_vendor_domains[:]
             
             # Use AI enhancement for complex queries, fallback for simple ones
             if self._should_use_ai_enhancement(query):
@@ -359,6 +362,7 @@ class ExaMCP:
             except Exception:
                 pass
             async with aiohttp.ClientSession() as session:
+                # First attempt: with current domains and date filter
                 async with session.post(
                     "https://api.exa.ai/search",
                     headers={
@@ -372,9 +376,9 @@ class ExaMCP:
                         "start_crawl_date": start_date
                     }
                 ) as response:
+                    results: List[Dict] = []
                     if response.status == 200:
                         data = await response.json()
-                        results = []
                         for item in data.get('results', []):
                             results.append({
                                 "title": item.get('title', 'No title'),
@@ -382,33 +386,59 @@ class ExaMCP:
                                 "url": item.get('url', ''),
                                 "source": "Exa Search"
                             })
-                        # If nothing found with domain filters, retry without restrictions
-                        if not results:
-                            async with session.post(
-                                "https://api.exa.ai/search",
-                                headers={
-                                    "Authorization": f"Bearer {exa_api_key}",
-                                    "Content-Type": "application/json"
-                                },
-                                json={
-                                    "query": enhanced_query,
-                                    "num_results": max_results,
-                                    "start_crawl_date": start_date
-                                }
-                            ) as fallback_resp:
-                                if fallback_resp.status == 200:
-                                    data2 = await fallback_resp.json()
-                                    for item in data2.get('results', []):
-                                        results.append({
-                                            "title": item.get('title', 'No title'),
-                                            "excerpt": item.get('text', 'No excerpt available')[:200] + "...",
-                                            "url": item.get('url', ''),
-                                            "source": "Exa Search"
-                                        })
-                        return results
                     else:
                         st.error(f"Exa API error: {response.status}")
                         return []
+
+                # Second attempt: if vendor context was intended but zero results, retry vendor-only without date limit
+                if not results and vendor_domains_used:
+                    async with session.post(
+                        "https://api.exa.ai/search",
+                        headers={
+                            "Authorization": f"Bearer {exa_api_key}",
+                            "Content-Type": "application/json"
+                        },
+                        json={
+                            "query": enhanced_query,
+                            "num_results": max_results,
+                            "include_domains": vendor_domains_used
+                        }
+                    ) as vendor_nodate_resp:
+                        if vendor_nodate_resp.status == 200:
+                            data_v = await vendor_nodate_resp.json()
+                            for item in data_v.get('results', []):
+                                results.append({
+                                    "title": item.get('title', 'No title'),
+                                    "excerpt": item.get('text', 'No excerpt available')[:200] + "...",
+                                    "url": item.get('url', ''),
+                                    "source": "Exa Search"
+                                })
+
+                # Final attempt: global fallback if still empty
+                if not results:
+                    async with session.post(
+                        "https://api.exa.ai/search",
+                        headers={
+                            "Authorization": f"Bearer {exa_api_key}",
+                            "Content-Type": "application/json"
+                        },
+                        json={
+                            "query": enhanced_query,
+                            "num_results": max_results,
+                            "start_crawl_date": start_date
+                        }
+                    ) as fallback_resp:
+                        if fallback_resp.status == 200:
+                            data2 = await fallback_resp.json()
+                            for item in data2.get('results', []):
+                                results.append({
+                                    "title": item.get('title', 'No title'),
+                                    "excerpt": item.get('text', 'No excerpt available')[:200] + "...",
+                                    "url": item.get('url', ''),
+                                    "source": "Exa Search"
+                                })
+
+                return results
         except Exception as e:
             st.error(f"Exa search error: {str(e)}")
             # Fallback links for common security topics
