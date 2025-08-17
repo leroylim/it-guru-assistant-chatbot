@@ -21,7 +21,7 @@ An AI-powered chatbot specialized in IT infrastructure and cybersecurity, built 
 - **Frontend**: Streamlit
 - **Backend**: Python using OpenRouter Chat Completions API
 - **Real-time Search**: Exa Search API with domain filters and vendor boosting
-- **MCP Integrations**: AWS docs (HTTP API), Microsoft Learn (SSE transport planned)
+- **MCP Integrations**: AWS docs (HTTP API), Microsoft Learn (SSE streaming implemented)
 - **Deployment**: Streamlit Community Cloud (free hosting)
 
 ## 🚀 Quick Start
@@ -230,7 +230,6 @@ def manage_conversation_context(chat_history, max_context=10):
 ## 🚀 Future Enhancements
 
 ### Planned Features
-- [ ] Integration with Microsoft Learn MCP server
 - [ ] Multi-modal support (document analysis)
 - [ ] Advanced analytics dashboard
 - [ ] Custom knowledge base upload
