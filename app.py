@@ -64,9 +64,15 @@ st.markdown("### 💬 Chat with IT-Guru")
 # Display chat history
 ChatInterface.render_chat_history()
 
-# Chat input
+# Chat input (also handle queued follow-up suggestions)
 placeholder = "Ask about IT infrastructure, cybersecurity, cloud, DevOps, or IT careers (resume, interviews, certs)"
-if prompt := st.chat_input(placeholder):
+prompt = None
+if st.session_state.get("queued_prompt"):
+    prompt = st.session_state.pop("queued_prompt")
+else:
+    prompt = st.chat_input(placeholder)
+
+if prompt:
     # Show user message immediately and store it
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -103,33 +109,102 @@ if prompt := st.chat_input(placeholder):
             unsafe_allow_html=True,
         )
         
-        with st.spinner("🤔 Thinking..."):
-            # Get conversation history
-            conversation_context = get_conversation_history()
-            
-            # Get AI response using the new service
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
+        # Manual status so we can clear it on first token
+        status_ph = st.empty()
+        status_ph.info("🤔 Thinking...")
+
+        # Conversation context
+        conversation_context = get_conversation_history()
+
+        try:
+            # Try streaming response
+            token_iter, _ = ai_service.stream_ai_response(prompt, conversation_context)
+
+            # Placeholder for progressive rendering
+            placeholder = st.empty()
+            # Seed with a typing indicator to show activity immediately
+            accumulated = ""
+            placeholder.markdown("…")
+
+            first_visible = False
+            for chunk in token_iter:
+                if chunk:
+                    accumulated += chunk
+                    placeholder.markdown(accumulated)
+                    if not first_visible:
+                        status_ph.empty()  # clear "Thinking..." once first content arrives
+                        first_visible = True
+
+            # Persist final message with sources and intent info
+            intent_info = st.session_state.get("last_intent_info")
+            sources_md_final = st.session_state.get("last_sources", "")
+            sources_list_final = st.session_state.get("last_sources_list", [])
+            msg = {
+                "role": "assistant",
+                "content": accumulated,
+                "sources_md": sources_md_final,
+                "sources_list": sources_list_final,
+                "intent_info": intent_info or {}
+            }
+            # Precompute follow-up suggestions to avoid blocking in UI render
             try:
-                response, sources = loop.run_until_complete(
+                ctx_text = "\n".join([f"{s.get('title','')}: {s.get('url','')}" for s in (sources_list_final or [])])
+                followups = ai_service.generate_followups(
+                    user_query=prompt,
+                    answer=accumulated,
+                    context_text=ctx_text,
+                )
+                msg["followups"] = followups
+            except Exception:
+                msg["followups"] = []
+            st.session_state.messages.append(msg)
+
+            # Show sources under the assistant message if available
+            if sources_md_final:
+                st.markdown(sources_md_final, unsafe_allow_html=False)
+        except AttributeError:
+            # Fallback to non-streaming behavior
+            try:
+                response, sources = ai_service._run_async(
                     ai_service.get_enhanced_ai_response(prompt, conversation_context)
                 )
-            finally:
-                loop.close()
-            
-            # Render response and persist it
+            except Exception as _:
+                # As a last resort, create a temporary loop
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                try:
+                    response, sources = loop.run_until_complete(
+                        ai_service.get_enhanced_ai_response(prompt, conversation_context)
+                    )
+                finally:
+                    loop.close()
+            status_ph.empty()
             st.markdown(response)
-            # Attach per-message metadata for intent and sources
             intent_info = st.session_state.get("last_intent_info")
-            st.session_state.messages.append({
+            sources_list_final = st.session_state.get("last_sources_list", [])
+            msg = {
                 "role": "assistant",
                 "content": response,
                 "sources_md": sources,
+                "sources_list": sources_list_final,
                 "intent_info": intent_info or {}
-            })
-            
-            # Store sources for display
+            }
+            # Precompute follow-ups
+            try:
+                ctx_text = "\n".join([f"{s.get('title','')}: {s.get('url','')}" for s in (sources_list_final or [])])
+                followups = ai_service.generate_followups(
+                    user_query=prompt,
+                    answer=response,
+                    context_text=ctx_text,
+                )
+                msg["followups"] = followups
+            except Exception:
+                msg["followups"] = []
+            st.session_state.messages.append(msg)
+
+            # Show sources under the assistant message if available; also persist
             if sources:
+                st.markdown(sources, unsafe_allow_html=False)
                 st.session_state.last_sources = sources
     
     # Rerun to render full history
@@ -137,9 +212,27 @@ if prompt := st.chat_input(placeholder):
 
 # Footer
 st.markdown("---")
-st.markdown("""
-<div style="text-align: center; color: #666; font-size: 0.9em;">
-    <p>🔧 IT-Guru Assistant | Built with Streamlit & OpenAI | 
-    <a href="https://github.com/leroylim/it-guru-assistant-chatbot.git" target="_blank">View on GitHub</a></p>
-</div>
-""", unsafe_allow_html=True)
+st.markdown(
+    """
+<div style="text-align: center; color: #666; font-size: 0.9em; line-height: 1.6;">
+  <p><strong>🔧 IT-Guru Assistant</strong></p>
+  <p>
+    Built by <strong>Han Yong Lim</strong>
+    · <a href="https://github.com/leroylim" target="_blank">GitHub</a>
+    · <a href="https://www.linkedin.com/in/han-yong-lim-312b88a7/" target="_blank">LinkedIn</a>
+  </p>
+  <p>
+    Credits: <a href="https://streamlit.io/" target="_blank">Streamlit</a> ·
+    <a href="https://openrouter.ai/" target="_blank">OpenRouter</a> ·
+    <a href="https://exa.ai/" target="_blank">Exa</a> ·
+    <a href="https://learn.microsoft.com/" target="_blank">Microsoft Learn</a> ·
+    <a href="https://docs.aws.amazon.com/" target="_blank">AWS Documentation</a>
+  </p>
+  <p>
+    <a href="https://github.com/leroylim/it-guru-assistant-chatbot.git" target="_blank">View on GitHub</a>
+  </p>
+  <p style="font-size: 0.85em; color: #888;">© 2025 Han Yong Lim. MIT License.</p>
+  </div>
+""",
+    unsafe_allow_html=True,
+)

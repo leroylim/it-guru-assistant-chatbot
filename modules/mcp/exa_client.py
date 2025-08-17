@@ -167,6 +167,48 @@ class ExaMCP:
                 hits.extend(domains)
         return list(set(hits))
     
+    def _is_comparative(self, query_lower: str) -> bool:
+        """Detect if the query is a comparative/vendor-mix intent."""
+        comparative_markers = [
+            ' vs ', ' versus ', 'compare', 'comparison', 'difference', 'diff between', 'better than', 'alternative to'
+        ]
+        return any(marker in query_lower for marker in comparative_markers)
+
+    def _infer_vendor_from_last_sources(self) -> List[str]:
+        """Infer a vendor from previous sources in session and return its domain list.
+
+        Looks at `st.session_state.last_sources_list` and matches URLs against the vendor_map.
+        Returns an empty list if no clear vendor is found.
+        """
+        try:
+            last_list = st.session_state.get('last_sources_list') or []
+            if not last_list:
+                return []
+            # Build reverse map: domain -> vendor_domains
+            reverse: dict[str, List[str]] = {}
+            for vendor_key, domains in self.vendor_map.items():
+                for d in domains:
+                    reverse[d] = domains
+            # Count hits per vendor_domains signature
+            from urllib.parse import urlparse
+            counts: dict[tuple, int] = {}
+            for item in last_list:
+                url = item.get('url') or ''
+                host = urlparse(url).netloc.lower()
+                if not host:
+                    continue
+                for domain, v_domains in reverse.items():
+                    if domain in host:
+                        key = tuple(v_domains)
+                        counts[key] = counts.get(key, 0) + 1
+            if not counts:
+                return []
+            # Pick the vendor_domains with most matches
+            best_domains_tuple = max(counts.items(), key=lambda x: x[1])[0]
+            return list(best_domains_tuple)
+        except Exception:
+            return []
+    
     async def _enhance_query_with_ai(self, query: str, category: str) -> str:
         """Use AI to generate optimal search keywords"""
         try:
@@ -287,9 +329,20 @@ class ExaMCP:
             # Categorize query and get appropriate domains
             category = self._categorize_query(query)
             domains = self._get_search_domains(category)
-            vendor_boost = self._vendor_domains(query.lower())
+            ql = query.lower()
+            vendor_boost = self._vendor_domains(ql)
             if vendor_boost:
-                domains = list(set(domains + vendor_boost))
+                # If not a comparative query, restrict to vendor domains to avoid cross-vendor leakage (e.g., Cisco on Palo Alto queries)
+                if self._is_comparative(ql):
+                    domains = list(set(domains + vendor_boost))
+                else:
+                    domains = vendor_boost
+            else:
+                # No explicit vendor in the query: try to inherit vendor context from previous sources for follow-ups
+                if not self._is_comparative(ql):
+                    inferred_vendor_domains = self._infer_vendor_from_last_sources()
+                    if inferred_vendor_domains:
+                        domains = inferred_vendor_domains
             
             # Use AI enhancement for complex queries, fallback for simple ones
             if self._should_use_ai_enhancement(query):

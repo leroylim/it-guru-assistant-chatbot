@@ -277,11 +277,25 @@ def manage_conversation_context(chat_history, max_context=10):
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## 👤 Author
+
+Built by **Han Yong Lim**  
+GitHub: https://github.com/leroylim  
+LinkedIn: https://www.linkedin.com/in/han-yong-lim-312b88a7/
+
 ## 🙏 Acknowledgments
 
 - Built following best practices from the comprehensive IT Assistant documentation
 - Inspired by modern RAG architectures and conversational AI patterns
 - Designed for portfolio demonstration and real-world applicability
+
+## 🧾 Credits
+
+- UI framework: [Streamlit](https://streamlit.io/)
+- LLM platform: [OpenRouter](https://openrouter.ai/)
+- Real-time web search: [Exa](https://exa.ai/)
+- Microsoft documentation: [Microsoft Learn](https://learn.microsoft.com/)
+- AWS documentation: [AWS Docs](https://docs.aws.amazon.com/)
 
 ## 📞 Support
 

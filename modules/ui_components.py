@@ -1,9 +1,11 @@
 """
 UI Components Module - Handles Streamlit UI components and interactions
 """
+import json
 import streamlit as st
 import requests
 from typing import Dict, List, Any
+from modules.ai_service import AIService
 
 
 class ModelManager:
@@ -255,10 +257,58 @@ class ChatInterface:
                             if multi_source:
                                 st.info("🔄 Multi-source search used due to low confidence")
 
-                    # Prefer per-message sources if present
+                    # Show sources under assistant messages (prefer markdown, fallback to list)
+                    sources_list = message.get("sources_list") or []
                     sources_md = message.get("sources_md")
                     if sources_md:
                         st.markdown(sources_md, unsafe_allow_html=False)
+                    elif sources_list:
+                        # Simple bullet list fallback
+                        st.markdown("**Sources**")
+                        for src in sources_list:
+                            title = src.get("title") or src.get("url", "Source")
+                            url = src.get("url", "")
+                            excerpt = src.get("excerpt")
+                            if excerpt:
+                                st.markdown(f"- [{title}]({url}) — {excerpt}")
+                            else:
+                                st.markdown(f"- [{title}]({url})")
+
+                    # Reformat controls removed per request
+
+                    # Follow-up suggestions: only on the last assistant message (avoid blocking calls during render)
+                    if (
+                        i == len(st.session_state.messages) - 1
+                        and not message.get("is_welcome", False)
+                    ):
+                        followups = message.get("followups") or []
+                        if followups:
+                            st.markdown("**💡 Follow-up suggestions:**")
+                            for idx, sug in enumerate(followups):
+                                if st.button(sug, key=f"follow_btn_{i}_{idx}", use_container_width=True):
+                                    st.session_state["queued_prompt"] = sug
+                                    st.rerun()
+
+                    # Export / Share (only on last non-welcome assistant message)
+                    if i == len(st.session_state.messages) - 1 and not message.get("is_welcome", False):
+                        with st.expander("📤 Export / Share", expanded=False):
+                            try:
+                                lines = ["# IT-Guru Assistant Chat Transcript\n"]
+                                for m in st.session_state.messages:
+                                    role = m["role"].title()
+                                    content = m.get("content", "")
+                                    lines.append(f"## {role}\n\n{content}\n")
+                                    if role == "Assistant":
+                                        smd = m.get("sources_md")
+                                        if smd:
+                                            lines.append("### Sources\n\n" + smd + "\n")
+                                md_blob = "\n".join(lines)
+                                st.download_button("⬇️ Download Markdown", data=md_blob, file_name="it-guru-transcript.md", mime="text/markdown")
+
+                                json_blob = json.dumps(st.session_state.messages, ensure_ascii=False, indent=2)
+                                st.download_button("⬇️ Download JSON", data=json_blob, file_name="it-guru-transcript.json", mime="application/json")
+                            except Exception as e:
+                                st.error(f"Export failed: {e}")
                 
                 # (Feedback buttons removed)
     
@@ -295,7 +345,7 @@ I'm your specialized AI assistant for IT infrastructure and cybersecurity. I can
 I use real-time sources including Microsoft Learn, AWS documentation, and current security feeds to provide you with accurate, up-to-date information."""
 
             st.session_state.messages = [
-                {"role": "assistant", "content": welcome_message}
+                {"role": "assistant", "content": welcome_message, "is_welcome": True}
             ]
         if "selected_model" not in st.session_state:
             # Use model from secrets.toml as default
