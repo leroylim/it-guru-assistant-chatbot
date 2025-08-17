@@ -74,6 +74,7 @@ st.markdown(
     <a href=\"https://github.com/leroylim/it-guru-assistant-chatbot.git\" target=\"_blank\">View on GitHub</a>
   </div>
 </div>
+<div class="credits-js" style="display:none">
 <script>
   (function() {
     function positionChatInputAboveCredits() {
@@ -99,6 +100,7 @@ st.markdown(
     setInterval(positionChatInputAboveCredits, 1000);
   })();
   </script>
+</div>
 """,
     unsafe_allow_html=True,
 )
